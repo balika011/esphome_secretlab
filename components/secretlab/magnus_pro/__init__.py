@@ -7,8 +7,6 @@ from esphome.const import CONF_ADDRESS, CONF_ID
 CODEOWNERS = ["@balika011"]
 DEPENDENCIES = ["uart"]
 
-MULTI_CONF = True
-
 CONF_CONTROLLER = "controller"
 CONF_REMOTE = "remote"
 
