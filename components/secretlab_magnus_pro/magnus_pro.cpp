@@ -8,14 +8,11 @@ static const char *const TAG = "secretlab.magnus_pro";
 
 void SecretLabMagnusPro::setup()
 {
-    ESP_LOGD(TAG, "SecretLabMagnusPro:setup");
-
 }
 
 void SecretLabMagnusPro::loop()
 {
-    ESP_LOGD(TAG, "SecretLabMagnusPro:loop %x %x", this->controller_, this->remote_);
-  /*while (this->controller_->available())
+  while (this->controller_->available())
   {
     uint8_t byte = this->controller_->read();
     ESP_LOGD(TAG, "controller: %02x", byte);
@@ -25,7 +22,7 @@ void SecretLabMagnusPro::loop()
   {
     uint8_t byte = this->remote_->read();
     ESP_LOGD(TAG, "remote: %02x", byte);
-  }*/
+  }
 }
 
 void SecretLabMagnusPro::dump_config()
