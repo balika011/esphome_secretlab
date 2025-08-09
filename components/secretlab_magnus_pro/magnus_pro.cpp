@@ -25,12 +25,17 @@ void SecretLabMagnusPro::dump_config()
 
 void SecretLabMagnusPro::recv_controller()
 {
-  if (this->controller_->available())
+  if (this->controller_->available() < 6)
   {
+    ESP_LOGD(TAG, "controller: available: %02x", this->controller_->available());
+    return;
+  }
+
+
     uint8_t byte;
     this->controller_->read_byte(&byte);
     ESP_LOGD(TAG, "controller: %02x", byte);
-  }
+
 }
 
 void SecretLabMagnusPro::recv_remote()
