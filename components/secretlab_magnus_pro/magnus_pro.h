@@ -28,6 +28,8 @@ class SecretLabMagnusPro : public Component
 
   uart::UARTComponent *controller_ = 0;
   uart::UARTComponent *remote_ = 0;
+  uint8_t last_seg1_ = 0, last_seg2_ = 0, last_seg3_ = 0, last_leds_ = 0;
+  uint8_t last_unk_ = 0, last_keys_ = 0;
 };
 
 }  // namespace secretlab

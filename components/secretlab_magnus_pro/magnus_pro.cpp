@@ -86,7 +86,7 @@ void SecretLabMagnusPro::recv_remote()
 uint8_t alpha_7seg[] = { 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b };
 uint8_t num_7seg[] = { 0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f };
 
-char _7seg_to_char(uint8_t seg)
+static char _7seg_to_char(uint8_t seg)
 {
   if (seg == 0x00)
     return ' ';
@@ -102,31 +102,31 @@ char _7seg_to_char(uint8_t seg)
     if (num_7seg[i] == (seg & 0x7f))
       return '0' + i;
 
+  ESP_LOGE(TAG, "unknown character: %02x", seg);
+
   return '?';
 }
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
 {
-  static uint8_t last_seg1 = 0, last_seg2 = 0, last_seg3 = 0, last_leds = 0;
-  if (last_seg1 == seg1 && last_seg2 == seg2 && last_seg3 == seg3 && last_leds == leds)
+  if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
     return;
 
-  last_seg1 = seg1;
-  last_seg2 = seg2;
-  last_seg3 = seg3;
-  last_leds = leds;
+  this->last_seg1_ = seg1;
+  this->last_seg2_ = seg2;
+  this->last_seg3_ = seg3;
+  this->last_leds_ = leds;
 
   ESP_LOGD(TAG, "controller: %c %c %c %02x", _7seg_to_char(seg1), _7seg_to_char(seg2), _7seg_to_char(seg3), leds);
 }
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 {
-  static uint8_t last_unk = 0, last_keys = 0;
-  if (last_unk == unk && last_keys == keys)
+  if (this->last_unk_ == unk && this->last_keys_ == keys)
     return;
 
-  last_unk = unk;
-  last_keys = keys;
+  this->last_unk_ = unk;
+  this->last_keys_ = keys;
 
   ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
 }
