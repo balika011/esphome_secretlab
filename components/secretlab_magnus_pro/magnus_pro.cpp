@@ -12,14 +12,15 @@ void SecretLabMagnusPro::setup()
 
 void SecretLabMagnusPro::loop()
 {
-  while (this->controller_->available())
+  ESP_LOGD(TAG, "SecretLabMagnusPro:loop %x %x", this->controller_, this->controller_->available());
+  if (this->controller_->available())
   {
     uint8_t byte;
     this->controller_->read_byte(&byte);
     ESP_LOGD(TAG, "controller: %02x", byte);
   }
 
-  while (this->remote_->available())
+  if (this->remote_->available())
   {
     uint8_t byte;
     this->remote_->read_byte(&byte);
