@@ -13,6 +13,17 @@ void SecretLabMagnusPro::setup()
 
 void SecretLabMagnusPro::loop()
 {
+  while (this->controller_->available())
+  {
+    uint8_t byte = this->controller_->read();
+    ESP_LOGD(TAG, "controller: %02x", byte);
+  }
+
+  while (this->remote_->available())
+  {
+    uint8_t byte = this->remote_->read();
+    ESP_LOGD(TAG, "remote: %02x", byte);
+  }
 }
 
 void SecretLabMagnusPro::dump_config()
