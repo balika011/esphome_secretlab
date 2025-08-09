@@ -8,11 +8,13 @@ static const char *const TAG = "secretlab.magnus_pro";
 
 void SecretLabMagnusPro::setup()
 {
+    ESP_LOGD(TAG, "SecretLabMagnusPro:setup");
 
 }
 
 void SecretLabMagnusPro::loop()
 {
+    ESP_LOGD(TAG, "SecretLabMagnusPro:loop");
   while (this->controller_->available())
   {
     uint8_t byte = this->controller_->read();
