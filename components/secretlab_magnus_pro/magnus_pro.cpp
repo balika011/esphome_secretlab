@@ -15,14 +15,14 @@ void SecretLabMagnusPro::loop()
   while (this->controller_->available())
   {
     uint8_t byte;
-    this->controller_->read(&byte);
+    this->controller_->read_byte(&byte);
     ESP_LOGD(TAG, "controller: %02x", byte);
   }
 
   while (this->remote_->available())
   {
     uint8_t byte;
-    this->remote_->read(&byte);
+    this->remote_->read_byte(&byte);
     ESP_LOGD(TAG, "remote: %02x", byte);
   }
 }
