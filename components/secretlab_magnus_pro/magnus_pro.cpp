@@ -24,7 +24,10 @@ void SecretLabMagnusPro::dump_config()
 void SecretLabMagnusPro::recv_controller()
 {
   if (this->controller_->available() < 6)
+  {
+    ESP_LOGD(TAG, "controller: available: %02x", this->controller_->available());
     return;
+  }
 
   uint8_t byte;
   this->controller_->read_byte(&byte);
@@ -42,7 +45,7 @@ void SecretLabMagnusPro::recv_controller()
 
   if (checksum != msg[4])
   {
-    printf("Invalid checksum! %02x != %02x", checksum, msg[4]);
+    printf("controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
   }
 
   printf("controller: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
@@ -51,7 +54,10 @@ void SecretLabMagnusPro::recv_controller()
 void SecretLabMagnusPro::recv_remote()
 {
   if (this->remote_->available() < 5)
+  {
+    ESP_LOGD(TAG, "remote: available: %02x", this->remote_->available());
     return;
+  }
 
   uint8_t byte;
   this->remote_->read_byte(&byte);
@@ -69,7 +75,7 @@ void SecretLabMagnusPro::recv_remote()
 
   if (checksum != msg[3])
   {
-    printf("Invalid checksum! %02x != %02x", checksum, msg[4]);
+    printf("remote: Invalid checksum! %02x != %02x", checksum, msg[4]);
   }
 
   printf("remote: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
