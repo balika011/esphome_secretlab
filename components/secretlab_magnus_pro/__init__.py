@@ -34,11 +34,11 @@ CONFIG_SCHEMA = cv.Schema(
 async def to_code(config):
     controller_config = config.get(CONF_CONTROLLER)
     controller_var = cg.new_Pvariable(controller_config[CONF_ID])
-    await uart.register_uart_device(controller_var, controller_config)
+    #await uart.register_uart_device(controller_var, controller_config)
 
     remote_config = config.get(CONF_REMOTE)
     remote_var = cg.new_Pvariable(remote_config[CONF_ID])
-    await uart.register_uart_device(remote_var, remote_config)
+    #await uart.register_uart_device(remote_var, remote_config)
 
     var = cg.new_Pvariable(config[CONF_ID])
     cg.add(var.set_controller(controller_var))
