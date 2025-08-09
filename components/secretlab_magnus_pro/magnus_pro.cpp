@@ -12,8 +12,6 @@ void SecretLabMagnusPro::setup()
 
 void SecretLabMagnusPro::loop()
 {
-  ESP_LOGD(TAG, "SecretLabMagnusPro:loop %x %x", this->controller_->available(), this->remote_->available());
-
   recv_controller();
 
   recv_remote();
@@ -26,10 +24,7 @@ void SecretLabMagnusPro::dump_config()
 void SecretLabMagnusPro::recv_controller()
 {
   if (this->controller_->available() < 6)
-  {
-    ESP_LOGD(TAG, "controller: available: %02x", this->controller_->available());
     return;
-  }
 
   uint8_t byte;
   this->controller_->read_byte(&byte);
@@ -56,10 +51,7 @@ void SecretLabMagnusPro::recv_controller()
 void SecretLabMagnusPro::recv_remote()
 {
   if (this->remote_->available() < 5)
-  {
-    ESP_LOGD(TAG, "remote: available: %02x", this->remote_->available());
     return;
-  }
 
   uint8_t byte;
   this->remote_->read_byte(&byte);
