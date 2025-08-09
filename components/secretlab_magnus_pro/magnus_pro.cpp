@@ -39,11 +39,6 @@ void SecretLabMagnusPro::recv_controller()
     return;
   }
 
-
-    uint8_t byte;
-    this->controller_->read_byte(&byte);
-    ESP_LOGD(TAG, "controller: %02x", byte);
-
 }
 
 void SecretLabMagnusPro::recv_remote()
