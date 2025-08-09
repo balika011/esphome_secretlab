@@ -12,7 +12,11 @@ void SecretLabMagnusPro::setup()
 
 void SecretLabMagnusPro::loop()
 {
-  ESP_LOGD(TAG, "SecretLabMagnusPro:loop %x %x", this->controller_, this->controller_->available());
+  ESP_LOGD(TAG, "SecretLabMagnusPro:loop %x %x", this->controller_->available(), this->remote_->available());
+
+  recv_controller();
+
+  recv_remote();
 }
 
 void SecretLabMagnusPro::dump_config()
