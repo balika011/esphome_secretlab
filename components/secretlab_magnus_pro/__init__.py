@@ -27,6 +27,6 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     controller = await cg.get_variable(config[CONF_CONTROLLER])
     remote = await cg.get_variable(config[CONF_REMOTE])
-    cg.add(var.set_controller(controller))
-    cg.add(var.set_remote(remote))
+    #cg.add(var.set_controller(controller))
+    #cg.add(var.set_remote(remote))
     await cg.register_component(var, config)
