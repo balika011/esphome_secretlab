@@ -19,7 +19,9 @@ class SecretLabMagnusPro : public Component
   void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
   void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
 
-  protected:
+ protected:
+  void recv_controller();
+
   uart::UARTComponent *controller_ = 0;
   uart::UARTComponent *remote_ = 0;
 };
