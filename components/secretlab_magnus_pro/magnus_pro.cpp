@@ -31,6 +31,14 @@ void SecretLabMagnusPro::recv_controller()
     return;
   }
 
+  uint8_t byte;
+  this->controller_->read_byte(&byte);
+  if (byte != 0x5a)
+  {
+    ESP_LOGD(TAG, "controller: %02x != 5a", byte);
+    return;
+  }
+
 
     uint8_t byte;
     this->controller_->read_byte(&byte);
