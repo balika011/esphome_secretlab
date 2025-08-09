@@ -17,30 +17,16 @@ SecretLabMagnusPro = secretlab_ns.class_("SecretLabMagnusPro", cg.Component)
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(SecretLabMagnusPro),
-        cv.Optional(CONF_CONTROLLER): cv.Schema(
-            {
-                cv.GenerateID(): cv.declare_id(uart.UARTDevice),
-            }
-        ).extend(uart.UART_DEVICE_SCHEMA),
-        cv.Optional(CONF_REMOTE): cv.Schema(
-            {
-                cv.GenerateID(): cv.declare_id(uart.UARTDevice),
-            }
-        ).extend(uart.UART_DEVICE_SCHEMA),
+        cv.GenerateID(CONF_CONTROLLER): cv.use_id(uart.UARTComponent),
+        cv.GenerateID(CONF_REMOTE): cv.use_id(uart.UARTComponent),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
 
 async def to_code(config):
-    controller_config = config.get(CONF_CONTROLLER)
-    controller_var = cg.new_Pvariable(controller_config[CONF_ID])
-    #await uart.register_uart_device(controller_var, controller_config)
-
-    remote_config = config.get(CONF_REMOTE)
-    remote_var = cg.new_Pvariable(remote_config[CONF_ID])
-    #await uart.register_uart_device(remote_var, remote_config)
-
+    controller = await cg.get_variable(config[CONF_CONTROLLER])
+    remote = await cg.get_variable(config[CONF_REMOTE])
     var = cg.new_Pvariable(config[CONF_ID])
-    cg.add(var.set_controller(controller_var))
-    cg.add(var.set_remote(remote_var))
+    cg.add(var.set_controller(controller))
+    cg.add(var.set_remote(remote))
     await cg.register_component(var, config)

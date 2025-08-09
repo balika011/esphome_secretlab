@@ -16,12 +16,12 @@ class SecretLabMagnusPro : public Component
   void loop() override;
   void dump_config() override;
 
-  void set_controller(uart::UARTDevice *controller) { this->controller_ = controller; }
-  void set_remote(uart::UARTDevice *remote) { this->remote_ = remote; }
+  void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
+  void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
 
   protected:
-  uart::UARTDevice *controller_;
-  uart::UARTDevice *remote_;
+  uart::UARTComponent *controller_;
+  uart::UARTComponent *remote_;
 };
 
 }  // namespace secretlab
