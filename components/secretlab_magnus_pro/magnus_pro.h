@@ -21,6 +21,7 @@ class SecretLabMagnusPro : public Component
 
  protected:
   void recv_controller();
+  void recv_remote();
 
   uart::UARTComponent *controller_ = 0;
   uart::UARTComponent *remote_ = 0;
