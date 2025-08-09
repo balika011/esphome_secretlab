@@ -88,11 +88,11 @@ uint8_t num_7seg[] = { 0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6
 
 char _7seg_to_char(uint8_t seg)
 {
-  if (seg == 0)
+  if (seg == 0x00)
     return ' ';
   
   if (seg == 0x40)
-    return '-'
+    return '-';
 
   for (int i = 0; i < sizeof(alpha_7seg); i++)
     if (alpha_7seg[i] == (seg & 0x7f))
