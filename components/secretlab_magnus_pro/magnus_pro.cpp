@@ -85,11 +85,27 @@ void SecretLabMagnusPro::recv_remote()
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
 {
+  static uint8_t last_seg1 = 0, last_seg2 = 0, last_seg3 = 0, last_leds = 0;
+  if (last_seg1 == seg1 && last_seg2 == seg2 && last_seg3 == seg3 && last_leds == leds)
+    return;
+
+  last_seg1 = seg1;
+  last_seg2 = seg2;
+  last_seg3 = seg3;
+  last_leds = leds;
+
   ESP_LOGD(TAG, "controller: %02x %02x %02x %02x", seg1, seg2, seg3, leds);
 }
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 {
+  static uint8_t last_unk = 0, last_keys = 0;
+  if (last_unk == unk && last_keys == keys)
+    return;
+
+  last_unk = unk;
+  last_keys = keys;
+
   ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
 }
 
