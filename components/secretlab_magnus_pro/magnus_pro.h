@@ -20,8 +20,8 @@ class SecretLabMagnusPro : public Component
   void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
 
   protected:
-  uart::UARTComponent *controller_;
-  uart::UARTComponent *remote_;
+  uart::UARTComponent *controller_ = 0;
+  uart::UARTComponent *remote_ = 0;
 };
 
 }  // namespace secretlab
