@@ -41,6 +41,6 @@ async def to_code(config):
     await uart.register_uart_device(remote_var, remote_config)
 
     var = cg.new_Pvariable(config[CONF_ID])
-    cg.add(var.set_controller(paren))
-    cg.add(var.set_remote(paren))
+    cg.add(var.set_controller(controller_var))
+    cg.add(var.set_remote(remote_var))
     await cg.register_component(var, config)
