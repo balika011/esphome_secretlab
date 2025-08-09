@@ -16,6 +16,9 @@ class SecretLabMagnusPro : public Component
   void loop() override;
   void dump_config() override;
 
+  void set_controller(uart::UARTDevice *controller) { }
+  void set_remote(uart::UARTDevice *remote) { }
+
   protected:
 };
 
