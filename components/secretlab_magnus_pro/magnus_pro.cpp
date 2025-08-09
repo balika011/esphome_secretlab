@@ -16,7 +16,7 @@ void SecretLabMagnusPro::loop()
 
   recv_controller();
 
-  recv_remote();
+  // recv_remote();
 }
 
 void SecretLabMagnusPro::dump_config()
