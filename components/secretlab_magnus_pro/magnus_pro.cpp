@@ -43,9 +43,10 @@ void SecretLabMagnusPro::recv_controller()
   if (checksum != msg[4])
   {
     ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
+    return;
   }
 
-  ESP_LOGD(TAG, "controller: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
+  process_controller(msg[0], msg[1], msg[2], msg[3]);
 }
 
 void SecretLabMagnusPro::recv_remote()
@@ -69,10 +70,27 @@ void SecretLabMagnusPro::recv_remote()
 
   if (checksum != msg[3])
   {
-    ESP_LOGD(TAG, "remote: Invalid checksum! %02x != %02x", checksum, msg[4]);
+    ESP_LOGD(TAG, "remote: Invalid checksum! %02x != %02x", checksum, msg[3]);
+    return;
   }
 
-  ESP_LOGD(TAG, "remote: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
+  if (msg[1] != (uint8_t) ~msg[2])
+  {
+    ESP_LOGD(TAG, "controller: Keymap not match negated! %02x != %02x", msg[1], (uint8_t) ~msg[2]);
+    return;
+  }
+
+  process_remote(msg[0], msg[1]);
+}
+
+void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
+{
+  ESP_LOGD(TAG, "controller: %02x %02x %02x %02x", seg1, seg2, seg3, leds);
+}
+
+void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
+{
+  ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
 }
 
 } //namespace secretlab
