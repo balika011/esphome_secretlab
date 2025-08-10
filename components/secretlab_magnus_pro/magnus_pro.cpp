@@ -47,7 +47,7 @@ void SecretLabMagnusPro::recv_controller()
     return;
   }
 
-  uint8_t fake_display[] = { 0x5a, (msg[0], msg[1], msg[2], msg[3], msg[4] };
+  uint8_t fake_display[] = { 0x5a, msg[0], msg[1], msg[2], msg[3], msg[4] };
   this->remote_->write_array(fake_display, sizeof(fake_display));
 
   process_controller(msg[0], msg[1], msg[2], msg[3]);
