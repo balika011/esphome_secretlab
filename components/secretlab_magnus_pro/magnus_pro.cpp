@@ -8,6 +8,7 @@ static const char *const TAG = "secretlab.magnus_pro";
 
 void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
   bool new_state = arg->isr_pin_.digital_read();
+  arg->controller_key_->digital_write(new_state);
 }
 
 void SecretLabMagnusPro::setup()
