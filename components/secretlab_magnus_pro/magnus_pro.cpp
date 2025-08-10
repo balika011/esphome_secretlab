@@ -30,7 +30,7 @@ void SecretLabMagnusPro::loop()
 {
   bool new_state = this->remote_key_->digital_read();
   ESP_LOGD(TAG, "loop: %d", new_state);
-  arg->controller_key_->digital_write(new_state);
+  this->controller_key_->digital_write(new_state);
 
   recv_controller();
 
