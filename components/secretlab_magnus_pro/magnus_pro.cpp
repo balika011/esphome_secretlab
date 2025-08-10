@@ -47,7 +47,7 @@ void SecretLabMagnusPro::recv_controller()
     return;
   }
 
-  uint8_t fake_display[] = { 0x5a, 0x07, 0xed, 0x06, 0x75, 0x6f };
+  uint8_t fake_display[] = { 0x5a, (msg[0], msg[1], msg[2], msg[3], msg[4] };
   this->remote_->write_array(fake_display, sizeof(fake_display));
 
   process_controller(msg[0], msg[1], msg[2], msg[3]);
@@ -84,7 +84,7 @@ void SecretLabMagnusPro::recv_remote()
     return;
   }
 
-  uint8_t remote_standby[] = { 0xa5, 0x00, 0x00, 0xff, 0xff };
+  uint8_t remote_standby[] = { 0xa5, msg[0], msg[1], msg[2], msg[3] };
   this->controller_->write_array(remote_standby, sizeof(remote_standby));
 
   process_remote(msg[0], msg[1]);
