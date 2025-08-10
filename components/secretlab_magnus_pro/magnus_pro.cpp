@@ -17,7 +17,7 @@ void SecretLabMagnusPro::setup()
 
   this->isr_pin_ = this->remote_key_->to_isr();
 
-  this->remote_key_->attach_interrupt(&gpio_intr, this, type);
+  this->remote_key_->attach_interrupt(&gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
 void SecretLabMagnusPro::loop()
