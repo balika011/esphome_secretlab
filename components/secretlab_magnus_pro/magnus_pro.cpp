@@ -152,7 +152,7 @@ enum REMOTE_KEYS
   KEY_S = (1 << 0),
   KEY_1 = (1 << 1),
   KEY_2 = (1 << 2),
-  KEY_3 = (1 << 3)
+  KEY_3 = (1 << 3),
   KEY_UP = (1 << 5),
   KEY_DOWN = (1 << 6),
 };
