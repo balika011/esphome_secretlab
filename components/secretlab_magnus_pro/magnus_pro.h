@@ -21,7 +21,7 @@ class SecretLabMagnusPro : public Component
   void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
   void set_controller_key(GPIOPin *pin) { controller_key_ = pin; }
   void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
-  void set_remote_key(GPIOPin *pin) { remote_key_ = pin; }
+  void set_remote_key(GPIOPin *pin) { remote_key_ = auto *internal_pin = static_cast<InternalGPIOPin *>(pin); }
 
  //protected:
   void recv_controller();
@@ -34,7 +34,7 @@ class SecretLabMagnusPro : public Component
   GPIOPin *controller_key_ = 0;
 
   uart::UARTComponent *remote_ = 0;
-  GPIOPin *remote_key_ = 0;
+  InternalGPIOPin *remote_key_ = 0;
   ISRInternalGPIOPin isr_pin_;
 
   uint8_t last_seg1_ = 0, last_seg2_ = 0, last_seg3_ = 0, last_leds_ = 0;
