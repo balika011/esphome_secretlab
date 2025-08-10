@@ -13,9 +13,9 @@ void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
 
 void SecretLabMagnusPro::setup()
 {
-  this->controller_key_->digital_write(false);
-
   this->isr_pin_ = this->remote_key_->to_isr();
+
+  this->controller_key_->digital_write(arg->remote_key_->digital_read());
 
   this->remote_key_->attach_interrupt(&gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
