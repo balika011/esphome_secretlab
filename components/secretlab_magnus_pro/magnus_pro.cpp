@@ -117,7 +117,18 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
   this->last_seg3_ = seg3;
   this->last_leds_ = leds;
 
-  ESP_LOGD(TAG, "controller: %c %c %c %02x", _7seg_to_char(seg1), _7seg_to_char(seg2), _7seg_to_char(seg3), leds);
+  std::string disp;
+  disp += _7seg_to_char(seg1);
+  if (seg1 & 0x80)
+    disp += '.';
+  disp += _7seg_to_char(seg2);
+  if (seg2 & 0x80)
+    disp += '.';
+  disp += _7seg_to_char(seg3);
+  if (seg3 & 0x80)
+    disp += '.';
+
+  ESP_LOGD(TAG, "controller: %s %02x", disp.c_str(), leds);
 }
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
