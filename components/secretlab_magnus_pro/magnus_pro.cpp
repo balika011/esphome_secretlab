@@ -16,7 +16,7 @@ void SecretLabMagnusPro::loop()
 
   recv_remote();
 
-  uint8_t remote_standby[] = { 0xA5, 0x00, 0x00, 0xFF };
+  uint8_t remote_standby[] = { 0xA5, 0x00, 0x00, 0xFF, 0xFF };
   this->controller_->write_array(remote_standby, sizeof(remote_standby));
 
   uint8_t fake_display[] = { 0x5A, 0x07, 0xED, 0x06, 0x75, 0x6F };
