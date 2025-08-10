@@ -8,6 +8,7 @@ static const char *const TAG = "secretlab.magnus_pro";
 
 void SecretLabMagnusPro::setup()
 {
+  this->controller_key_->digital_write(false);
 }
 
 void SecretLabMagnusPro::loop()
