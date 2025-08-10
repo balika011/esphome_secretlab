@@ -42,6 +42,12 @@ void SecretLabMagnusPro::loop()
   recv_controller();
 
   recv_remote();
+
+  static uint8_t seg1 = 0, seg2 = 0, seg3 = 0, leds = 0;
+  
+
+  uint8_t fake_display[] = { 0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds) };
+  this->remote_->write_array(fake_display, sizeof(fake_display));
 }
 
 void SecretLabMagnusPro::dump_config()
@@ -72,9 +78,6 @@ void SecretLabMagnusPro::recv_controller()
     ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
     return;
   }
-
-  uint8_t fake_display[] = { 0x5a, msg[0], msg[1], msg[2], msg[3], msg[4] };
-  this->remote_->write_array(fake_display, sizeof(fake_display));
 
   process_controller(msg[0], msg[1], msg[2], msg[3]);
 }
