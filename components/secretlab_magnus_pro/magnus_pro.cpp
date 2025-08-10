@@ -115,12 +115,12 @@ static char _7seg_to_char(uint8_t seg)
 
 enum REMOTE_LEDS
 {
-  UP = (1 << 0),
-  DOWN = (1 << 1),
-  _S = (1 << 3),
-  _1 = (1 << 4),
-  _2 = (1 << 5),
-  _3 = (1 << 6)
+  LED_UP = (1 << 0),
+  LED_DOWN = (1 << 1),
+  LED_S = (1 << 3),
+  LED_1 = (1 << 4),
+  LED_2 = (1 << 5),
+  LED_3 = (1 << 6)
 };
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
@@ -149,12 +149,12 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 
 enum REMOTE_KEYS
 {
-  _S = (1 << 0),
-  _1 = (1 << 1),
-  _2 = (1 << 2),
-  _3 = (1 << 3)
-  UP = (1 << 5),
-  DOWN = (1 << 6),
+  KEY_S = (1 << 0),
+  KEY_1 = (1 << 1),
+  KEY_2 = (1 << 2),
+  KEY_3 = (1 << 3)
+  KEY_UP = (1 << 5),
+  KEY_DOWN = (1 << 6),
 };
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
