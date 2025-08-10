@@ -16,6 +16,9 @@ void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
 
 void SecretLabMagnusPro::setup()
 {
+  this->controller_key_->setup();
+  this->remote_key_->setup();
+
    this->controller_key_->digital_write(false);
 #if 0
   this->isr_pin_ = this->remote_key_->to_isr();
