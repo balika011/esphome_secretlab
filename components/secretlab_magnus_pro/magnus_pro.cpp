@@ -16,12 +16,6 @@ void SecretLabMagnusPro::loop()
   recv_controller();
 
   recv_remote();
-
-  uint8_t remote_standby[] = { 0xA5, 0x00, 0x00, 0xFF, 0xFF };
-  this->controller_->write_array(remote_standby, sizeof(remote_standby));
-
-  uint8_t fake_display[] = { 0x5A, 0x07, 0xED, 0x06, 0x75, 0x6F };
-  this->remote_->write_array(fake_display, sizeof(fake_display));
 }
 
 void SecretLabMagnusPro::dump_config()
@@ -52,6 +46,9 @@ void SecretLabMagnusPro::recv_controller()
     ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
     return;
   }
+
+  uint8_t fake_display[] = { 0x5a, 0x07, 0xed, 0x06, 0x75, 0x6f };
+  this->remote_->write_array(fake_display, sizeof(fake_display));
 
   process_controller(msg[0], msg[1], msg[2], msg[3]);
 }
@@ -86,6 +83,9 @@ void SecretLabMagnusPro::recv_remote()
     ESP_LOGD(TAG, "controller: Keymap not match negated! %02x != %02x", msg[1], (uint8_t) ~msg[2]);
     return;
   }
+
+  uint8_t remote_standby[] = { 0xa5, 0x00, 0x00, 0xff, 0xff };
+  this->controller_->write_array(remote_standby, sizeof(remote_standby));
 
   process_remote(msg[0], msg[1]);
 }
