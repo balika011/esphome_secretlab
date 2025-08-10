@@ -15,6 +15,12 @@ void SecretLabMagnusPro::loop()
   recv_controller();
 
   recv_remote();
+
+  uint8_t remote_standby[] = { 0xA5, 0x00, 0x00, 0xFF };
+  this->controller_->write_array(remote_standby, sizeof(remote_standby));
+
+  uint8_t fake_display[] = { 0x5A, 0x07, 0xED, 0x06, 0x75, 0x6F };
+  this->remote_->write_array(fake_display, sizeof(fake_display));
 }
 
 void SecretLabMagnusPro::dump_config()
@@ -107,6 +113,16 @@ static char _7seg_to_char(uint8_t seg)
   return '?';
 }
 
+enum REMOTE_LEDS
+{
+  UP = (1 << 0),
+  DOWN = (1 << 1),
+  _S = (1 << 3),
+  _1 = (1 << 4),
+  _2 = (1 << 5),
+  _3 = (1 << 6)
+};
+
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
 {
   if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
@@ -130,6 +146,16 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 
   ESP_LOGD(TAG, "controller: %s %02x", disp.c_str(), leds);
 }
+
+enum REMOTE_KEYS
+{
+  _S = (1 << 0),
+  _1 = (1 << 1),
+  _2 = (1 << 2),
+  _3 = (1 << 3)
+  UP = (1 << 5),
+  DOWN = (1 << 6),
+};
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 {
