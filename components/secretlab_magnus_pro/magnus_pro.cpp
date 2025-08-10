@@ -8,15 +8,6 @@ static const char *const TAG = "secretlab.magnus_pro";
 
 void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
   bool new_state = arg->isr_pin_.digital_read();
-  if (new_state != arg->last_state_) {
-    arg->state_ = new_state;
-    arg->last_state_ = new_state;
-    arg->changed_ = true;
-    // Wake up the component from its disabled loop state
-    if (arg->component_ != nullptr) {
-      arg->component_->enable_loop_soon_any_context();
-    }
-  }
 }
 
 void SecretLabMagnusPro::setup()
