@@ -6,9 +6,26 @@ namespace secretlab {
 
 static const char *const TAG = "secretlab.magnus_pro";
 
+void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
+  bool new_state = arg->isr_pin_.digital_read();
+  if (new_state != arg->last_state_) {
+    arg->state_ = new_state;
+    arg->last_state_ = new_state;
+    arg->changed_ = true;
+    // Wake up the component from its disabled loop state
+    if (arg->component_ != nullptr) {
+      arg->component_->enable_loop_soon_any_context();
+    }
+  }
+}
+
 void SecretLabMagnusPro::setup()
 {
   this->controller_key_->digital_write(false);
+
+  this->isr_pin_ = this->remote_key_->to_isr();
+
+  this->remote_key_->attach_interrupt(&gpio_intr, this, type);
 }
 
 void SecretLabMagnusPro::loop()
