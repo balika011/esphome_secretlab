@@ -28,12 +28,17 @@ CONFIG_SCHEMA = cv.Schema(
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
+
     controller = await cg.get_variable(config[CONF_CONTROLLER])
+    cg.add(var.set_controller(controller))
+
     controller_key = await cg.gpio_pin_expression(config[CONF_CONTROLLER_KEY])
     cg.add(var.set_controller_key(controller_key))
-    cg.add(var.set_controller(controller))
+
     remote = await cg.get_variable(config[CONF_REMOTE])
+    cg.add(var.set_remote(remote))
+
     remote_key = await cg.gpio_pin_expression(config[CONF_REMOTE_KEY])
     cg.add(var.set_remote_key(remote_key))
-    cg.add(var.set_remote(remote))
+
     await cg.register_component(var, config)
