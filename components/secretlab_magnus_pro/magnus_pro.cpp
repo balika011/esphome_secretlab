@@ -48,6 +48,21 @@ void SecretLabMagnusPro::loop()
   uint8_t fake_display[] = { 0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds) };
   this->remote_->write_array(fake_display, sizeof(fake_display));
 
+  seg1 <<= 1;
+
+  if (seg1 == 0)
+    seg1 = 1;
+
+  seg2 <<= 1;
+
+  if (seg2 == 0)
+    seg2 = 1;
+
+  seg3 <<= 1;
+
+  if (seg3 == 0)
+    seg3 = 1;
+
   leds <<= 1;
 
   if (leds == 0)
