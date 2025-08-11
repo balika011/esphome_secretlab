@@ -51,17 +51,17 @@ void SecretLabMagnusPro::loop()
   seg1 <<= 1;
 
   if (seg1 == 0)
-    seg1 = 1;
+    seg2 = 1;
 
   seg2 <<= 1;
 
   if (seg2 == 0)
-    seg2 = 1;
+    seg3 = 1;
 
   seg3 <<= 1;
 
   if (seg3 == 0)
-    seg3 = 1;
+    seg1 = 1;
 
   leds <<= 1;
 
