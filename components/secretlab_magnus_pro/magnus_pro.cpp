@@ -15,11 +15,11 @@ void SecretLabMagnusPro::setup()
   this->controller_key_->setup();
   this->remote_key_->setup();
 
-  this->controller_key_->digital_write(true);
+  // this->controller_key_->digital_write(true);
 
   this->isr_pin_ = this->remote_key_->to_isr();
 
-  // this->controller_key_->digital_write(this->remote_key_->digital_read());
+  this->controller_key_->digital_write(this->remote_key_->digital_read());
 
   this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
@@ -40,7 +40,7 @@ void SecretLabMagnusPro::loop()
 
   recv_remote();
 
-#if 1
+#if 0
   static uint8_t seg1 = 0, seg2 = 0, seg3 = 0, leds = 0;
 
   uint8_t fake_display[] = { 0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds) };
@@ -131,9 +131,6 @@ void SecretLabMagnusPro::recv_remote()
     return;
   }
 
-  uint8_t remote_standby[] = { 0xa5, msg[0], msg[1], msg[2], msg[3] };
-  this->controller_->write_array(remote_standby, sizeof(remote_standby));
-
   process_remote(msg[0], msg[1]);
 }
 
@@ -173,8 +170,8 @@ enum REMOTE_LEDS
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
 {
-  if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
-    return;
+  //if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
+  //  return;
 
   this->last_seg1_ = seg1;
   this->last_seg2_ = seg2;
@@ -193,6 +190,9 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
     disp += '.';
 
   ESP_LOGD(TAG, "controller: %s %02x", disp.c_str(), leds);
+
+  uint8_t fake_display[] = {0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds)};
+  this->remote_->write_array(fake_display, sizeof(fake_display));
 }
 
 enum REMOTE_KEYS
@@ -207,20 +207,25 @@ enum REMOTE_KEYS
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 {
-  if (this->last_unk_ == unk && this->last_keys_ == keys)
-    return;
+  //if (this->last_unk_ == unk && this->last_keys_ == keys)
+  //  return;
 
   this->last_unk_ = unk;
   this->last_keys_ = keys;
 
   ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
+
+  uint8_t remote_standby[] = {0xa5, unk, keys, ~keys, unk + keys + ~keys};
+  this->controller_->write_array(remote_standby, sizeof(remote_standby));
+
+  process_remote(msg[0], msg[1]);
 }
 
 void SecretLabMagnusPro::gpio_intr()
 {
 	bool new_state = this->isr_pin_.digital_read();
 	ESP_LOGD(TAG, "gpio_intr: %d", new_state);
-	// this->controller_key_->digital_write(new_state);
+	this->controller_key_->digital_write(new_state);
 }
 
 } //namespace secretlab
