@@ -35,7 +35,7 @@ protected:
   GPIOPin *controller_key_ = 0;
 
   uart::UARTComponent *remote_ = 0;
-  GPIOPin *remote_key_ = 0;
+  InternalGPIOPin *remote_key_ = 0;
   ISRInternalGPIOPin isr_pin_;
   bool last_state_ = false;
 
