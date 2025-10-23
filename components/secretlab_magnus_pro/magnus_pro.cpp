@@ -40,7 +40,7 @@ void SecretLabMagnusPro::loop()
 
   recv_remote();
 
-#if 1a
+#if 1
   static uint8_t seg1 = 0, seg2 = 0, seg3 = 0, leds = 0;
 
   uint8_t fake_display[] = { 0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds) };
