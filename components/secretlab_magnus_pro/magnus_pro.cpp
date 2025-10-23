@@ -217,8 +217,6 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 
   uint8_t remote_standby[] = {0xa5, unk, keys, ~keys, unk + keys + ~keys};
   this->controller_->write_array(remote_standby, sizeof(remote_standby));
-
-  process_remote(msg[0], msg[1]);
 }
 
 void SecretLabMagnusPro::gpio_intr()
