@@ -6,7 +6,7 @@ namespace secretlab {
 
 static const char *const TAG = "secretlab.magnus_pro";
 
-void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
+void IRAM_ATTR _gpio_intr(SecretLabMagnusPro *arg) {
 	arg->gpio_intr();
 }
 
@@ -21,7 +21,7 @@ void SecretLabMagnusPro::setup()
 
   this->controller_key_->digital_write(this->remote_key_->digital_read());
 
-  this->remote_key_->attach_interrupt(&::gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
+  this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
 void SecretLabMagnusPro::loop()
