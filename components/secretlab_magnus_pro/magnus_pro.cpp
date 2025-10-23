@@ -6,7 +6,7 @@ namespace secretlab {
 
 static const char *const TAG = "secretlab.magnus_pro";
 
-#if 0
+#if 1
 void IRAM_ATTR gpio_intr(SecretLabMagnusPro *arg) {
   bool new_state = arg->isr_pin_.digital_read();
   ESP_LOGD(TAG, "gpio_intr: %d", new_state);
@@ -20,7 +20,8 @@ void SecretLabMagnusPro::setup()
   this->remote_key_->setup();
 
    this->controller_key_->digital_write(false);
-#if 0
+
+#if 1
   this->isr_pin_ = this->remote_key_->to_isr();
 
   this->controller_key_->digital_write(this->remote_key_->digital_read());
@@ -43,6 +44,7 @@ void SecretLabMagnusPro::loop()
 
   recv_remote();
 
+#if 0
   static uint8_t seg1 = 0, seg2 = 0, seg3 = 0, leds = 0;
 
   seg1 = seg2 = seg3 = 0x80;
@@ -69,6 +71,7 @@ void SecretLabMagnusPro::loop()
 
   if (leds == 0)
     leds = 1;
+#endif
 }
 
 void SecretLabMagnusPro::dump_config()
