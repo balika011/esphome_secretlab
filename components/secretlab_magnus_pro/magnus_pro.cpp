@@ -218,9 +218,9 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 
 void SecretLabMagnusPro::gpio_intr()
 {
-	bool new_state = arg->isr_pin_.digital_read();
+	bool new_state = this->isr_pin_.digital_read();
 	ESP_LOGD(TAG, "gpio_intr: %d", new_state);
-	arg->controller_key_->digital_write(new_state);
+	this->controller_key_->digital_write(new_state);
 }
 
 } //namespace secretlab

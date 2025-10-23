@@ -21,7 +21,7 @@ public:
   void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
   void set_controller_key(GPIOPin *pin) { controller_key_ = pin; }
   void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
-  void set_remote_key(GPIOPin *pin) { remote_key_ = pin; }
+  void set_remote_key(InternalGPIOPin *pin) { remote_key_ = pin; }
   void gpio_intr();
 
 protected:
