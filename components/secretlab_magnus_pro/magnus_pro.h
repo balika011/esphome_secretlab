@@ -13,7 +13,7 @@ namespace secretlab {
 
 class SecretLabMagnusPro : public Component
 {
- public:
+public:
   void setup() override;
   void loop() override;
   void dump_config() override;
@@ -22,8 +22,9 @@ class SecretLabMagnusPro : public Component
   void set_controller_key(GPIOPin *pin) { controller_key_ = pin; }
   void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
   void set_remote_key(GPIOPin *pin) { remote_key_ = pin; }
+  void gpio_intr();
 
- protected:
+protected:
   void recv_controller();
   void recv_remote();
 
@@ -35,7 +36,7 @@ class SecretLabMagnusPro : public Component
 
   uart::UARTComponent *remote_ = 0;
   GPIOPin *remote_key_ = 0;
-  // ISRInternalGPIOPin isr_pin_;
+  ISRInternalGPIOPin isr_pin_;
   bool last_state_ = false;
 
   uint8_t last_seg1_ = 0, last_seg2_ = 0, last_seg3_ = 0, last_leds_ = 0;
