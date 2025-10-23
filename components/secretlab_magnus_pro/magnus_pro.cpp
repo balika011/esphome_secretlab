@@ -109,7 +109,7 @@ void SecretLabMagnusPro::recv_remote()
   this->remote_->read_byte(&byte);
   if (byte != 0xa5)
   {
-    ESP_LOGD(TAG, "remote: %02x != a5", byte);
+    // ESP_LOGD(TAG, "remote: %02x != a5", byte);
     return;
   }
 
