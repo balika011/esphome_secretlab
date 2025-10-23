@@ -21,7 +21,7 @@ void SecretLabMagnusPro::setup()
 
   this->controller_key_->digital_write(this->remote_key_->digital_read());
 
-  this->remote_key_->attach_interrupt(&gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
+  this->remote_key_->attach_interrupt(&::gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
 void SecretLabMagnusPro::loop()
