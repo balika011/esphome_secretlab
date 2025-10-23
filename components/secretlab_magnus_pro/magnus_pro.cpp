@@ -15,7 +15,7 @@ void SecretLabMagnusPro::setup()
   this->controller_key_->setup();
   this->remote_key_->setup();
 
-  this->controller_key_->digital_write(false);
+  this->controller_key_->digital_write(true);
 
   this->isr_pin_ = this->remote_key_->to_isr();
 
