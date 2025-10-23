@@ -19,13 +19,14 @@ void SecretLabMagnusPro::setup()
 
   this->isr_pin_ = this->remote_key_->to_isr();
 
-  this->controller_key_->digital_write(this->remote_key_->digital_read());
+  // this->controller_key_->digital_write(this->remote_key_->digital_read());
 
   this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
 void SecretLabMagnusPro::loop()
 {
+#if 0
   bool new_state = this->remote_key_->digital_read();
   if (new_state != last_state_)
   {
@@ -33,6 +34,7 @@ void SecretLabMagnusPro::loop()
     ESP_LOGD(TAG, "loop: %d", new_state);
     this->controller_key_->digital_write(new_state);
   }
+#endif
 
   recv_controller();
 
@@ -220,7 +222,7 @@ void SecretLabMagnusPro::gpio_intr()
 {
 	bool new_state = this->isr_pin_.digital_read();
 	ESP_LOGD(TAG, "gpio_intr: %d", new_state);
-	this->controller_key_->digital_write(new_state);
+	// this->controller_key_->digital_write(new_state);
 }
 
 } //namespace secretlab
