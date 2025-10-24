@@ -20,9 +20,7 @@ public:
 	void dump_config() override;
 
 	void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
-	void set_controller_key(GPIOPin *pin) { controller_key_ = pin; }
 	void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
-	void set_remote_key(InternalGPIOPin *pin) { remote_key_ = pin; }
 	void set_switch(InternalGPIOPin *pin) { switch_ = pin; }
 	void remote_key_intr();
 	void switch_intr();
@@ -37,10 +35,7 @@ protected:
 	void process_remote(uint8_t unk, uint8_t keys);
 
 	uart::UARTComponent *controller_ = 0;
-	GPIOPin *controller_key_ = 0;
-
 	uart::UARTComponent *remote_ = 0;
-	InternalGPIOPin *remote_key_ = 0;
 
 	InternalGPIOPin *switch_ = 0;
 

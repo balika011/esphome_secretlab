@@ -64,14 +64,8 @@ static void IRAM_ATTR _switch_intr(SecretLabMagnusPro *arg)
 
 void SecretLabMagnusPro::setup()
 {
-	this->controller_key_->setup();
-	this->remote_key_->setup();
 	this->switch_->setup();
-
-	this->remote_key_->attach_interrupt(&_remote_key_intr, this, gpio::INTERRUPT_ANY_EDGE);
 	this->switch_->attach_interrupt(&_switch_intr, this, gpio::INTERRUPT_ANY_EDGE);
-
-	this->controller_key_->digital_write(this->remote_key_->digital_read());
 }
 
 void SecretLabMagnusPro::loop()
@@ -213,13 +207,6 @@ void SecretLabMagnusPro::send_remote()
 {
 	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
 	this->remote_->write_array(data, sizeof(data));
-}
-
-void SecretLabMagnusPro::remote_key_intr()
-{
-	bool new_state = this->remote_key_->digital_read();
-	ESP_LOGD(TAG, "remote_key_intr: %d", new_state);
-	this->controller_key_->digital_write(new_state);
 }
 
 void SecretLabMagnusPro::switch_intr()
