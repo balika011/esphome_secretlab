@@ -139,9 +139,11 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 	if (leds & LED_3)
 		leds_str += "3 ";
 
+	/*
 	float height = std::stof(disp);
 	if (height != 0)
 		height_ = height;
+	*/
 
 	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
 }
