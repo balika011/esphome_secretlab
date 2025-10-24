@@ -22,8 +22,8 @@ public:
 	void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
 	void set_controller_key(GPIOPin *pin) { controller_key_ = pin; }
 	void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
-	void set_remote_key(GPIOPin *pin) { remote_key_ = pin; }
-	void set_switch(GPIOPin *pin) { switch_ = pin; }
+	void set_remote_key(InternalGPIOPin *pin) { remote_key_ = pin; }
+	void set_switch(InternalGPIOPin *pin) { switch_ = pin; }
 	void remote_key_intr();
 	void switch_intr();
 
@@ -40,9 +40,9 @@ protected:
 	GPIOPin *controller_key_ = 0;
 
 	uart::UARTComponent *remote_ = 0;
-	GPIOPin *remote_key_ = 0;
+	InternalGPIOPin *remote_key_ = 0;
 
-	GPIOPin *switch_ = 0;
+	InternalGPIOPin *switch_ = 0;
 
 	bool last_state_ = false;
 
