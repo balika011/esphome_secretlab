@@ -18,11 +18,9 @@ namespace secretlab
 		this->controller_key_->setup();
 		this->remote_key_->setup();
 
-		this->controller_key_->digital_write(false);
-
 		this->isr_pin_ = this->remote_key_->to_isr();
 
-		// this->controller_key_->digital_write(this->remote_key_->digital_read());
+		this->controller_key_->digital_write(this->remote_key_->digital_read());
 
 		this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 	}
@@ -226,7 +224,7 @@ namespace secretlab
 	{
 		bool new_state = this->isr_pin_.digital_read();
 		ESP_LOGD(TAG, "gpio_intr: %d", new_state);
-		// this->controller_key_->digital_write(new_state);
+		this->controller_key_->digital_write(new_state);
 	}
 
 } // namespace secretlab
