@@ -52,11 +52,6 @@ static char _7seg_to_char(uint8_t seg)
 	return '?';
 }
 
-static void IRAM_ATTR _remote_key_intr(SecretLabMagnusPro *arg)
-{
-	arg->remote_key_intr();
-}
-
 static void IRAM_ATTR _switch_intr(SecretLabMagnusPro *arg)
 {
 	arg->switch_intr();
