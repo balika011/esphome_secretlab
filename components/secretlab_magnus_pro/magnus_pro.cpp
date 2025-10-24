@@ -32,18 +32,19 @@ static char _7seg_to_char(uint8_t seg)
 	static const uint8_t alpha_7seg[] = {0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
 	static const uint8_t num_7seg[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
 
-	if ((seg & 0x7f) == 0x00)
-		return ' ';
+	seg &= 0x7f;
 
-	if ((seg & 0x7f) == 0x40)
+	if (seg == 0x00) return ' ';
+
+	if (seg == 0x40)
 		return '-';
 
 	for (int i = 0; i < sizeof(alpha_7seg); i++)
-		if (alpha_7seg[i] == (seg & 0x7f))
+		if (alpha_7seg[i] == seg)
 			return 'A' + i;
 
 	for (int i = 0; i < sizeof(num_7seg); i++)
-		if (num_7seg[i] == (seg & 0x7f))
+		if (num_7seg[i] == seg)
 			return '0' + i;
 
 	ESP_LOGE(TAG, "unknown character: %02x", seg);
@@ -75,33 +76,6 @@ void SecretLabMagnusPro::loop()
 
 	send_controller();
 	send_remote();
-
-#if 0
-	static uint8_t seg1 = 0, seg2 = 0, seg3 = 0, leds = 0;
-
-	uint8_t fake_display[] = { 0x5a, seg1, seg2, seg3, leds, (seg1 + seg2 + seg3 + leds) };
-	this->remote_->write_array(fake_display, sizeof(fake_display));
-
-	seg1 <<= 1;
-
-	if (seg1 == 0)
-		seg2 = 1;
-
-	seg2 <<= 1;
-
-	if (seg2 == 0)
-		seg3 = 1;
-
-	seg3 <<= 1;
-
-	if (seg3 == 0)
-		seg1 = 1;
-
-	leds <<= 1;
-
-	if (leds == 0)
-		leds = 1;
-#endif
 }
 
 void SecretLabMagnusPro::dump_config()
@@ -203,7 +177,21 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 	if (seg3 & 0x80)
 		disp += '.';
 
-	ESP_LOGD(TAG, "controller: %s %02x", disp.c_str(), leds);
+	std::string leds_str;
+	if (leds & LED_UP)
+		leds_str += "UP ";
+	if (leds & LED_DOWN)
+		leds_str += "DOWN ";
+	if (leds & LED_S)
+		leds_str += "S ";
+	if (leds & LED_1)
+		leds_str += "1 ";
+	if (leds & LED_2)
+		leds_str += "2 ";
+	if (leds & LED_3)
+		leds_str += "3 ";
+
+	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
 }
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
