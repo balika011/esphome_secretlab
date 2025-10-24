@@ -11,6 +11,7 @@ CONF_CONTROLLER = "controller"
 CONF_CONTROLLER_KEY = "controller_key"
 CONF_REMOTE = "remote"
 CONF_REMOTE_KEY = "remote_key"
+CONF_SWITCH = "switch"
 
 secretlab_ns = cg.esphome_ns.namespace("secretlab")
 SecretLabMagnusPro = secretlab_ns.class_("SecretLabMagnusPro", cg.Component)
@@ -40,5 +41,8 @@ async def to_code(config):
 
     remote_key = await cg.gpio_pin_expression(config[CONF_REMOTE_KEY])
     cg.add(var.set_remote_key(remote_key))
+
+    switch = await cg.gpio_pin_expression(config[CONF_SWITCH])
+    cg.add(var.set_switch(switch))
 
     await cg.register_component(var, config)

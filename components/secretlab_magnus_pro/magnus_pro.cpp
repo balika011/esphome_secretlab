@@ -52,21 +52,26 @@ static char _7seg_to_char(uint8_t seg)
 	return '?';
 }
 
-void IRAM_ATTR _gpio_intr(SecretLabMagnusPro *arg)
+static void IRAM_ATTR _remote_key_intr(SecretLabMagnusPro *arg)
 {
-	arg->gpio_intr();
+	arg->remote_key_intr();
+}
+
+static void IRAM_ATTR _switch_intr(SecretLabMagnusPro *arg)
+{
+	arg->switch_intr();
 }
 
 void SecretLabMagnusPro::setup()
 {
 	this->controller_key_->setup();
 	this->remote_key_->setup();
+	this->switch_->setup();
+
+	this->remote_key_->attach_interrupt(&_remote_key_intr, this, gpio::INTERRUPT_ANY_EDGE);
+	this->switch_->attach_interrupt(&_switch_intr, this, gpio::INTERRUPT_ANY_EDGE);
 
 	this->controller_key_->digital_write(this->remote_key_->digital_read());
-
-	this->isr_pin_ = this->remote_key_->to_isr();
-
-	this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
 void SecretLabMagnusPro::loop()
@@ -205,11 +210,17 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
 }
 
-void SecretLabMagnusPro::gpio_intr()
+void SecretLabMagnusPro::remote_key_intr()
 {
-	bool new_state = this->isr_pin_.digital_read();
-	ESP_LOGD(TAG, "gpio_intr: %d", new_state);
+	bool new_state = this->remote_key_.digital_read();
+	ESP_LOGD(TAG, "remote_key_intr: %d", new_state);
 	this->controller_key_->digital_write(new_state);
+}
+
+void SecretLabMagnusPro::switch_intr()
+{
+	bool new_state = this->switch_.digital_read();
+	ESP_LOGD(TAG, "switch_intr: %d", new_state);
 }
 
 } // namespace secretlab
