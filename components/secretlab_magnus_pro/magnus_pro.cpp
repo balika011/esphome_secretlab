@@ -160,18 +160,6 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 void SecretLabMagnusPro::send_controller()
 {
 	uint8_t keys = last_keys_;
-	keys &= ~KEY_S;
-
-	if (do_shit_)
-	{
-		if (height_ > 92)
-			keys = KEY_DOWN;
-		else if (height_ < 88)
-			keys = KEY_UP;
-		else
-			do_shit_ = false;
-	}
-
 	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, last_unk_ + keys + ~keys};
 	this->controller_->write_array(data, sizeof(data));
 }
@@ -219,11 +207,6 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	this->last_keys_ = keys;
 
 	ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
-
-	if (keys & KEY_S)
-	{
-		this->do_shit_ = true;
-	}
 }
 
 void SecretLabMagnusPro::send_remote()
