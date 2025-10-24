@@ -161,9 +161,9 @@ void SecretLabMagnusPro::send_controller()
 
 	if (do_shit_)
 	{
-		if (height_ > 90)
+		if (height_ > 92)
 			keys = KEY_DOWN;
-		else if (height_ < 90)
+		else if (height_ < 88)
 			keys = KEY_UP;
 		else
 			do_shit_ = false;
