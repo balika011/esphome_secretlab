@@ -23,6 +23,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Required(CONF_CONTROLLER_KEY): pins.gpio_output_pin_schema,
         cv.GenerateID(CONF_REMOTE): cv.use_id(uart.UARTComponent),
         cv.Required(CONF_REMOTE_KEY): pins.gpio_input_pin_schema,
+        cv.Required(CONF_SWITCH): pins.gpio_input_pin_schema,
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
