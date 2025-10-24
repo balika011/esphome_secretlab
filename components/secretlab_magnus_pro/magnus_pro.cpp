@@ -212,14 +212,14 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 
 void SecretLabMagnusPro::remote_key_intr()
 {
-	bool new_state = this->remote_key_.digital_read();
+	bool new_state = this->remote_key_->digital_read();
 	ESP_LOGD(TAG, "remote_key_intr: %d", new_state);
 	this->controller_key_->digital_write(new_state);
 }
 
 void SecretLabMagnusPro::switch_intr()
 {
-	bool new_state = this->switch_.digital_read();
+	bool new_state = this->switch_->digital_read();
 	ESP_LOGD(TAG, "switch_intr: %d", new_state);
 }
 
