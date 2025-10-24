@@ -115,9 +115,61 @@ void SecretLabMagnusPro::recv_controller()
 	process_controller(msg[0], msg[1], msg[2], msg[3]);
 }
 
+void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
+{
+	if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
+		return;
+
+	this->last_seg1_ = seg1;
+	this->last_seg2_ = seg2;
+	this->last_seg3_ = seg3;
+	this->last_leds_ = leds;
+
+	std::string disp;
+	disp += _7seg_to_char(seg1);
+	if (seg1 & 0x80)
+		disp += '.';
+	disp += _7seg_to_char(seg2);
+	if (seg2 & 0x80)
+		disp += '.';
+	disp += _7seg_to_char(seg3);
+	if (seg3 & 0x80)
+		disp += '.';
+
+	std::string leds_str;
+	if (leds & LED_UP)
+		leds_str += "UP ";
+	if (leds & LED_DOWN)
+		leds_str += "DOWN ";
+	if (leds & LED_S)
+		leds_str += "S ";
+	if (leds & LED_1)
+		leds_str += "1 ";
+	if (leds & LED_2)
+		leds_str += "2 ";
+	if (leds & LED_3)
+		leds_str += "3 ";
+
+	sscanf(disp.c_str(), "%f", height_);
+
+	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
+}
+
 void SecretLabMagnusPro::send_controller()
 {
-	uint8_t data[] = {0xa5, last_unk_, last_keys_, ~last_keys_, last_unk_ + last_keys_ + ~last_keys_};
+	uint8_t keys = last_keys_;
+
+	if (do_shit_)
+	{
+		if (height_ > 90)
+			keys = KEY_DOWN;
+		else if (height_ < 90)
+			keys = KEY_UP;
+		else
+			do_shit_ = false;
+	}
+
+	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, last_unk_ + keys + ~keys};
 	this->controller_->write_array(data, sizeof(data));
 }
 
@@ -155,50 +207,6 @@ void SecretLabMagnusPro::recv_remote()
 	process_remote(msg[0], msg[1]);
 }
 
-void SecretLabMagnusPro::send_remote()
-{
-	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
-	this->remote_->write_array(data, sizeof(data));
-}
-
-void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
-{
-	if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
-		return;
-
-	this->last_seg1_ = seg1;
-	this->last_seg2_ = seg2;
-	this->last_seg3_ = seg3;
-	this->last_leds_ = leds;
-
-	std::string disp;
-	disp += _7seg_to_char(seg1);
-	if (seg1 & 0x80)
-		disp += '.';
-	disp += _7seg_to_char(seg2);
-	if (seg2 & 0x80)
-		disp += '.';
-	disp += _7seg_to_char(seg3);
-	if (seg3 & 0x80)
-		disp += '.';
-
-	std::string leds_str;
-	if (leds & LED_UP)
-		leds_str += "UP ";
-	if (leds & LED_DOWN)
-		leds_str += "DOWN ";
-	if (leds & LED_S)
-		leds_str += "S ";
-	if (leds & LED_1)
-		leds_str += "1 ";
-	if (leds & LED_2)
-		leds_str += "2 ";
-	if (leds & LED_3)
-		leds_str += "3 ";
-
-	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
-}
-
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 {
 	if (this->last_unk_ == unk && this->last_keys_ == keys)
@@ -208,6 +216,17 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	this->last_keys_ = keys;
 
 	ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
+
+	if (keys & KEY_S)
+	{
+		this->do_shit_ = true;
+	}
+}
+
+void SecretLabMagnusPro::send_remote()
+{
+	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
+	this->remote_->write_array(data, sizeof(data));
 }
 
 void SecretLabMagnusPro::remote_key_intr()
