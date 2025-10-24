@@ -1,0 +1,6 @@
+{
+	"files.associations": {
+		"cinttypes": "cpp",
+		"cstdint": "cpp"
+	}
+}
