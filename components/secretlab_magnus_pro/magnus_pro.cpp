@@ -29,7 +29,6 @@ enum REMOTE_LEDS
 
 static char _7seg_to_char(uint8_t seg)
 {
-	//                                      a     b     c     d     e     f    g      h     i     j     k     l     m     n     o     p     q     r     s     t    v      u     w     x     y     z
 	static const uint8_t alpha_7seg[] = {0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
 	static const uint8_t num_7seg[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
 
@@ -61,6 +60,7 @@ static void IRAM_ATTR _switch_intr(SecretLabMagnusPro *arg)
 void SecretLabMagnusPro::setup()
 {
 	this->switch_->setup();
+
 	this->switch_->attach_interrupt(&_switch_intr, this, gpio::INTERRUPT_ANY_EDGE);
 }
 
@@ -147,6 +147,7 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 			height_ = height;
 	}
 	catch (...)
+	{
 	}
 
 	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
@@ -155,6 +156,18 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 void SecretLabMagnusPro::send_controller()
 {
 	uint8_t keys = last_keys_;
+	keys &= ~KEY_S;
+
+	if (do_shit_)
+	{
+		if (height_ > 92)
+			keys = KEY_DOWN;
+		else if (height_ < 88)
+			keys = KEY_UP;
+		else
+			do_shit_ = false;
+	}
+
 	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, last_unk_ + keys + ~keys};
 	this->controller_->write_array(data, sizeof(data));
 }
@@ -202,6 +215,11 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	this->last_keys_ = keys;
 
 	ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
+
+	if (keys & KEY_S)
+	{
+		this->do_shit_ = true;
+	}
 }
 
 void SecretLabMagnusPro::send_remote()

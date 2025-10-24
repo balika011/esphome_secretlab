@@ -44,6 +44,7 @@ protected:
 	uint8_t last_unk_ = 0, last_keys_ = 0;
 
 	float height_ = 0;
+	bool do_shit_ = false;
 };
 } // namespace secretlab
 } // namespace esphome
