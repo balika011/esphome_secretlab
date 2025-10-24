@@ -18,9 +18,9 @@ namespace secretlab
 		this->controller_key_->setup();
 		this->remote_key_->setup();
 
-		this->isr_pin_ = this->remote_key_->to_isr();
-
 		this->controller_key_->digital_write(this->remote_key_->digital_read());
+
+		this->isr_pin_ = this->remote_key_->to_isr();
 
 		this->remote_key_->attach_interrupt(&_gpio_intr, this, gpio::INTERRUPT_ANY_EDGE);
 	}
