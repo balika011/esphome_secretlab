@@ -22,7 +22,6 @@ public:
 	void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
 	void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
 	void set_switch(InternalGPIOPin *pin) { switch_ = pin; }
-	void remote_key_intr();
 	void switch_intr();
 
 protected:
