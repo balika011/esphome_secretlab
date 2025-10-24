@@ -158,6 +158,7 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 void SecretLabMagnusPro::send_controller()
 {
 	uint8_t keys = last_keys_;
+	keys &= ~KEY_S;
 
 	if (do_shit_)
 	{
