@@ -62,6 +62,8 @@ void SecretLabMagnusPro::setup()
 	this->switch_->setup();
 
 	this->switch_->attach_interrupt(&_switch_intr, this, gpio::INTERRUPT_ANY_EDGE);
+
+	switch_intr();
 }
 
 void SecretLabMagnusPro::loop()
@@ -173,7 +175,7 @@ void SecretLabMagnusPro::send_controller()
 			do_shit_ = false;
 	}
 
-	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, (uint8_t)(last_unk_ + keys + ~keys)};
+	uint8_t data[] = {0xa5, last_unk_, keys, (uint8_t) ~keys, (uint8_t)(last_unk_ + keys + ~keys)};
 	this->controller_->write_array(data, sizeof(data));
 }
 
