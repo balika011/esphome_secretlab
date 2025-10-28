@@ -237,14 +237,7 @@ void SecretLabMagnusPro::send_controller()
 void SecretLabMagnusPro::recv_remote()
 {
 	if (!is_remote_on_)
-	{
-		while (this->remote_->available() > 0)
-		{
-			uint8_t byte;
-			this->remote_->read_byte(&byte);
-		}
 		return;
-	}
 
 	uint8_t msg[4];
 
@@ -330,6 +323,11 @@ void SecretLabMagnusPro::switch_intr()
 {
 	bool state = this->switch_->digital_read();
 	ESP_LOGD(TAG, "switch_intr: %d", state);
+
+	ESP_LOGD(TAG, "switch_intr: available1: %d", this->remote_->available());
+	this->remote_->setup();
+	ESP_LOGD(TAG, "switch_intr: available2: %d", this->remote_->available());
+
 	is_remote_on_ = !state;
 }
 
