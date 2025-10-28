@@ -48,6 +48,10 @@ static char _7seg_to_char(uint8_t seg, bool upper)
 	if (seg == 0x40)
 		return '-';
 
+	for (int i = 0; i < sizeof(num_7seg); i++)
+		if (num_7seg[i] == seg)
+			return '0' + i;
+
 	if (upper)
 	{
 		for (int i = 0; i < sizeof(alpha_7seg_upper); i++)
@@ -60,10 +64,6 @@ static char _7seg_to_char(uint8_t seg, bool upper)
 			if (alpha_7seg_lower[i] == seg)
 				return 'a' + i;
 	}
-
-	for (int i = 0; i < sizeof(num_7seg); i++)
-		if (num_7seg[i] == seg)
-			return '0' + i;
 
 	ESP_LOGE(TAG, "unknown character: %02x", seg);
 
