@@ -203,13 +203,10 @@ void SecretLabMagnusPro::recv_remote()
 		ESP_LOGD(TAG, "remote: %02x != a5", byte);
 	}
 
-	ESP_LOGD(TAG, "remote: available: %02x", this->remote_->available());
-
 	if (this->remote_->available() < sizeof(msg))
 		return;
 
 	this->remote_->read_array(msg, sizeof(msg));
-	ESP_LOGD(TAG, "remote: msg: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
 
 	uint8_t checksum = 0;
 	for (int i = 0; i < sizeof(msg) - 1; i++)
@@ -218,6 +215,7 @@ void SecretLabMagnusPro::recv_remote()
 	if (checksum != msg[3])
 	{
 		ESP_LOGD(TAG, "remote: Invalid checksum! %02x != %02x", checksum, msg[3]);
+		ESP_LOGD(TAG, "remote: msg: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
 		return;
 	}
 
