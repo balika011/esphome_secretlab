@@ -13,7 +13,7 @@ namespace esphome
 {
 namespace secretlab
 {
-class SecretLabMagnusPro : public sensor::Sensor, Component
+class SecretLabMagnusPro : public sensor::Sensor, public Component
 {
 public:
 	void setup() override;
