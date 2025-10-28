@@ -248,16 +248,16 @@ void SecretLabMagnusPro::recv_remote()
 	if (!is_remote_on_)
 		return;
 
+	uint8_t msg[4];
+
 	// Throw out old packets
-	if (this->controller_->available() > (sizeof(msg) * 2))
+	if (this->remote_->available() > (sizeof(msg) * 2))
 	{
-		int read = this->controller_->available() - (sizeof(msg) + 1);
+		int read = this->remote_->available() - (sizeof(msg) + 1);
 		uint8_t *buf = new uint8_t[read];
-		this->controller_->read_array(buf, read);
+		this->remote_->read_array(buf, read);
 		delete[] buf;
 	}
-
-	uint8_t msg[4];
 
 	while (this->remote_->available() >= sizeof(msg) + 1)
 	{
