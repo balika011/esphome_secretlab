@@ -101,12 +101,12 @@ void SecretLabMagnusPro::dump_config()
 
 void SecretLabMagnusPro::recv_controller()
 {
-	// Throw out old packets
+	// throw out old packets
 	int available = this->controller_->available();
-	if (available > sizeof(controller_buf_) * 2)
+	if (available > sizeof(this->controller_buf_) * 2)
 	{
-		uint8_t *buf = new uint8_t[available - sizeof(controller_buf_)];
-		this->controller_->read_array(buf, available - sizeof(controller_buf_));
+		uint8_t *buf = new uint8_t[available - sizeof(this->controller_buf_)];
+		this->controller_->read_array(buf, available - sizeof(this->controller_buf_));
 		delete [] buf;
 	}
 
@@ -116,26 +116,26 @@ void SecretLabMagnusPro::recv_controller()
 		if (this->controller_->available() == 0)
 			return;
 
-		this->controller_->read_byte(&controller_buf_[sizeof(controller_buf_) - 1]);
+		this->controller_->read_byte(&this->controller_buf_[sizeof(this->controller_buf_) - 1]);
 
 		// is the fist byte the start marker?
-		if (controller_buf_[0] == 0x5a)
+		if (this->controller_buf_[0] == 0x5a)
 		{
 			uint8_t checksum = 0;
-			for (int i = 1; i < sizeof(controller_buf_) - 1; i++)
-				checksum += controller_buf_[i];
+			for (int i = 1; i < sizeof(this->controller_buf_) - 1; i++)
+				checksum += this->controller_buf_[i];
 
 			// does the checksum match?
-			if (checksum == controller_buf_[5])
+			if (checksum == this->controller_buf_[5])
 				break;
 		}
 
 		// shift out the first byte
-		for (int i = 0; i < sizeof(controller_buf_) - 1; i++)
-			controller_buf_[i] = controller_buf_[i + 1];
+		for (int i = 0; i < sizeof(this->controller_buf_) - 1; i++)
+			this->controller_buf_[i] = this->controller_buf_[i + 1];
 	}
 
-	process_controller(controller_buf_[1], controller_buf_[2], controller_buf_[3], controller_buf_[4]);
+	process_controller();
 }
 
 void SecretLabMagnusPro::recv_remote()
@@ -183,25 +183,25 @@ void SecretLabMagnusPro::recv_remote()
 	process_remote(msg[0], msg[1]);
 }
 
-void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
+void SecretLabMagnusPro::process_controller()
 {
-	if (this->last_seg_[0] == seg1 && this->last_seg_[1] == seg2 && this->last_seg_[2] == seg3 && this->last_leds_ == leds)
+	if (this->controller_seg_[0] == this->controller_buf_[1] && this->controller_seg_[1] == this->controller_buf_[2] && this->controller_seg_[2] == this->controller_buf_[3] && this->controller_leds_ == this->controller_buf_[4])
 		return;
 
-	this->last_seg_[0] = seg1;
-	this->last_seg_[1] = seg2;
-	this->last_seg_[2] = seg3;
-	this->last_leds_ = leds;
+	this->controller_seg_[0] = this->controller_buf_[1];
+	this->controller_seg_[1] = this->controller_buf_[2];
+	this->controller_seg_[2] = this->controller_buf_[3];
+	this->controller_leds_ = this->controller_buf_[4];
 
 	std::string disp;
-	disp += _7seg_to_char(seg1, true);
-	if (seg1 & 0x80)
+	disp += _7seg_to_char(this->controller_seg_[0], true);
+	if (this->controller_seg_[0] & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(seg2, false);
-	if (seg2 & 0x80)
+	disp += _7seg_to_char(this->controller_seg_[1], false);
+	if (this->controller_seg_[1] & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(seg3, false);
-	if (seg3 & 0x80)
+	disp += _7seg_to_char(this->controller_seg_[2], false);
+	if (this->controller_seg_[2] & 0x80)
 		disp += '.';
 
 	std::string leds_str;
@@ -326,7 +326,8 @@ void SecretLabMagnusPro::send_remote()
 	if (!is_remote_on_)
 		return;
 
-	uint8_t data[] = {0x5a, last_seg_[0], last_seg_[1], last_seg_[2], last_leds_, (uint8_t)(last_seg_[0] + last_seg_[1] + last_seg_[2] + last_leds_)};
+	uint8_t data[] = {0x5a, this->controller_seg_[0], this->controller_seg_[1], this->controller_seg_[2], this->controller_leds_,
+		(uint8_t)(this->controller_seg_[0] + this->controller_seg_[1] + this->controller_seg_[2] + this->controller_leds_)};
 	this->remote_->write_array(data, sizeof(data));
 }
 

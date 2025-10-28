@@ -31,17 +31,19 @@ protected:
 	void send_controller();
 	void send_remote();
 
-	void process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds);
+	void process_controller();
 	void process_remote(uint8_t unk, uint8_t keys);
 
 	uart::UARTComponent *controller_ = 0;
 	uint8_t controller_buf_[6] = {0, 0, 0, 0, 0, 0};
-	uart::UARTComponent *remote_ = 0;
-	InternalGPIOPin *switch_ = 0;
-	bool is_remote_on_ = false;
+	uint8_t controller_seg_[3] = {0, 0, 0};
+	uint8_t controller_leds_ = 0;
 
-	uint8_t last_seg_[3] = {0, 0, 0}, last_leds_ = 0;
+	uart::UARTComponent *remote_ = 0;
+	bool is_remote_on_ = false;
 	uint8_t last_unk_ = 0, last_keys_ = 0;
+
+	InternalGPIOPin *switch_ = 0;
 
 	float height_ = 0.0;
 	float set_height_ = 0.0;
