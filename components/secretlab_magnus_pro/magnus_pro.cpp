@@ -205,15 +205,19 @@ void SecretLabMagnusPro::send_controller()
 			set_height_ctr_ = (set_height_ctr_ + 1) % 10;
 			if (height_ > set_height_)
 			{
-				ESP_LOGD(TAG, "DOWN");
 				if (!set_height_ctr_)
+				{
+					ESP_LOGD(TAG, "DOWN SLOW");
 					keys = KEY_DOWN;
+				}
 			}
 			else if (height_ < set_height_)
 			{
-				ESP_LOGD(TAG, "UP");
 				if (!set_height_ctr_)
+				{
+					ESP_LOGD(TAG, "UP SLOW");
 					keys = KEY_UP;
+				}
 			}
 			else
 			{
