@@ -135,7 +135,7 @@ void SecretLabMagnusPro::recv_controller()
 			controller_buf_[i] = controller_buf_[i + 1];
 	}
 
-	process_controller(msg[1], msg[2], msg[3], msg[4]);
+	process_controller(controller_buf_[1], controller_buf_[2], controller_buf_[3], controller_buf_[4]);
 }
 
 void SecretLabMagnusPro::recv_remote()
