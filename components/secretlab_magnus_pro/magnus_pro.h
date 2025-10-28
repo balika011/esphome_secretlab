@@ -49,7 +49,7 @@ protected:
 	int height_ = 0;
 	int set_height_ = 0;
 	int set_height_ctr_ = 0;
-	int set_height_fast_limit_ = 2;
+	int set_height_fast_limit_ = 20;
 	int set_height_slow_skip_ = 100;
 };
 } // namespace secretlab
