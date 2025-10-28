@@ -225,7 +225,7 @@ void SecretLabMagnusPro::process_controller()
 	if (this->controller_leds_ & LED_3)
 		leds_str += "3 ";
 
-	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
+	ESP_LOGD(TAG, "controller: %s [%s]", disp.c_str(), leds_str.c_str());
 #endif
 }
 
@@ -270,7 +270,7 @@ void SecretLabMagnusPro::send_controller()
 			else
 			{
 				ESP_LOGD(TAG, "DONE");
-				set_height_ = 0.0;
+				set_height_ = 0;
 			}
 		}
 	}
@@ -287,6 +287,16 @@ void SecretLabMagnusPro::process_remote()
 	this->remote_unk_ = remote_buf_[1];
 	this->remote_keys_ = remote_buf_[2];
 
+	// HACK
+	if (this->remote_keys_ & KEY_S)
+	{
+		ESP_LOGD(TAG, "remote: set_height_: %d", set_height_);
+		if (this->set_height_ == 0)
+			this->set_height_ = 900;
+		else
+			this->set_height_ = 0;
+	}
+
 	std::string keys_str;
 	if (this->remote_keys_ & KEY_S)
 		keys_str += "S ";
@@ -301,16 +311,7 @@ void SecretLabMagnusPro::process_remote()
 	if (this->remote_keys_ & KEY_DOWN)
 		keys_str += "DOWN ";
 
-	ESP_LOGD(TAG, "remote: %02x %s", this->remote_unk_, keys_str.c_str());
-
-	if (this->remote_keys_ & KEY_S)
-	{
-		ESP_LOGD(TAG, "remote: set_height_: %d", set_height_);
-		if (this->set_height_ == 0)
-			this->set_height_ = 900;
-		else
-			this->set_height_ = 0;
-	}
+	ESP_LOGD(TAG, "remote: %02x [%s]", this->remote_unk_, keys_str.c_str());
 }
 
 void SecretLabMagnusPro::send_remote()
