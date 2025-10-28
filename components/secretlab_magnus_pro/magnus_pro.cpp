@@ -116,10 +116,7 @@ void SecretLabMagnusPro::recv_controller()
 		if (this->controller_->available() == 0)
 			return;
 
-		this->remote_->read_byte(&controller_buf_[sizeof(controller_buf_) - 1]);
-
-		this->controller_->read_array(&controller_buf_[controller_buf_len_], to_read);
-		controller_buf_len_ += 1;
+		this->controller_->read_byte(&controller_buf_[sizeof(controller_buf_) - 1]);
 
 		// is the fist byte the start marker?
 		if (controller_buf_[0] == 0x5a)
