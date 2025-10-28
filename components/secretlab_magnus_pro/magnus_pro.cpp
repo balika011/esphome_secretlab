@@ -103,7 +103,13 @@ void SecretLabMagnusPro::recv_controller()
 {
 	uint8_t msg[5];
 
-	ESP_LOGD(TAG, "controller: available: %d", this->controller_->available());
+	if (this->controller_->available() > (sizeof(msg) * 2))
+	{
+		int read = this->controller_->available() - (sizeof(msg) + 1);
+		void *buf = malloc(read);
+		this->controller_->read_array(buf, read);
+		free(buf);
+	}
 
 	while (this->controller_->available() >= sizeof(msg) + 1)
 	{
