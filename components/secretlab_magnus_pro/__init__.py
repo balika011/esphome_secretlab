@@ -18,7 +18,7 @@ CONFIG_SCHEMA = sensor.sensor_schema(
 	unit_of_measurement="cm",
 	icon="mdi:human-male-height-variant",
 	accuracy_decimals=1
-).exted(cv.Schema(
+).extend(cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(SecretLabMagnusPro),
         cv.GenerateID(CONF_CONTROLLER): cv.use_id(uart.UARTComponent),
