@@ -77,6 +77,8 @@ static void IRAM_ATTR _switch_intr(SecretLabMagnusPro *arg)
 
 void SecretLabMagnusPro::setup()
 {
+	set_accuracy_decimals(1);
+
 	this->switch_->setup();
 
 	this->switch_->attach_interrupt(&_switch_intr, this, gpio::INTERRUPT_ANY_EDGE);
