@@ -303,7 +303,7 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	if (keys & KEY_S)
 	{
 		ESP_LOGD(TAG, "remote: set_height_: %f", set_height_);
-		if (this->set_height_ != 0.0)
+		if (this->set_height_ == 0.0)
 			this->set_height_ = 90.0;
 		else
 			this->set_height_ = 0.0;
