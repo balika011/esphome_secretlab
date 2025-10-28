@@ -245,7 +245,7 @@ void SecretLabMagnusPro::send_remote()
 	if (!is_remote_on_)
 		return;
 
-	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
+	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (uint8_t)(last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
 	this->remote_->write_array(data, sizeof(data));
 }
 
