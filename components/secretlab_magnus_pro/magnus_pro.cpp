@@ -190,22 +190,22 @@ void SecretLabMagnusPro::send_controller()
 	{
 		ESP_LOGD(TAG, "set_height_: %f height_: %f set_height_ctr_: %d", set_height_, height_, set_height_ctr_);
 		keys = 0;
-		if (height_ > set_height_ + 4)
+		if (height_ > set_height_ + set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN");
 			keys = KEY_DOWN;
 		}
-		else if (height_ < set_height_ - 4)
+		else if (height_ < set_height_ - set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "UP");
 			keys = KEY_UP;
 		}
 		else
 		{
-			set_height_ctr_ = (set_height_ctr_ + 1) % 10;
+			set_height_ctr_ = (set_height_ctr_ + 1) % set_height_slow_skip_;
 			if (height_ > set_height_)
 			{
-				if (!set_height_ctr_)
+				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "DOWN SLOW");
 					keys = KEY_DOWN;
@@ -213,7 +213,7 @@ void SecretLabMagnusPro::send_controller()
 			}
 			else if (height_ < set_height_)
 			{
-				if (!set_height_ctr_)
+				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "UP SLOW");
 					keys = KEY_UP;
