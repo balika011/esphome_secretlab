@@ -205,6 +205,12 @@ void SecretLabMagnusPro::process_controller()
 	if (this->controller_seg_[2] & 0x80)
 		disp += '.';
 
+	if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] >= '0' && disp[2] <= '9')
+		this->height_ = (disp[0] - '0') * 1000 + (disp[1] - '0') * 100 + (disp[2] - '0') * 10;
+	else if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] == '.' && disp[3] >= '0' && disp[3] <= '9')
+		this->height_ = (disp[0] - '0') * 100 + (disp[1] - '0') * 10 + (disp[3] - '0');
+
+#if 0
 	std::string leds_str;
 	if (this->controller_leds_ & LED_UP)
 		leds_str += "UP ";
@@ -219,14 +225,8 @@ void SecretLabMagnusPro::process_controller()
 	if (this->controller_leds_ & LED_3)
 		leds_str += "3 ";
 
-	if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] >= '0' && disp[2] <= '9')
-		this->height_ = (disp[0] - '0') * 1000 + (disp[1] - '0') * 100 + (disp[2] - '0') * 10;
-	else if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] == '.' && disp[3] >= '0' && disp[3] <= '9')
-		this->height_ = (disp[0] - '0') * 100 + (disp[1] - '0') * 10 + (disp[3] - '0');
-
-	ESP_LOGD(TAG, "height_: %d", this->height_);
-
 	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
+#endif
 }
 
 void SecretLabMagnusPro::send_controller()
