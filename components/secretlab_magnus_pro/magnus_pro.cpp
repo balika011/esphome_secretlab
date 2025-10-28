@@ -254,7 +254,21 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 	this->last_unk_ = unk;
 	this->last_keys_ = keys;
 
-	ESP_LOGD(TAG, "remote: %02x %02x", unk, keys);
+	std::string keys_str;
+	if (keys & KEY_S)
+		keys_str += "S ";
+	if (keys & KEY_1)
+		keys_str += "1 ";
+	if (keys & KEY_2)
+		keys_str += "2 ";
+	if (keys & KEY_3)
+		keys_str += "3 ";
+	if (keys & KEY_UP)
+		keys_str += "UP ";
+	if (keys & KEY_DOWN)
+		keys_str += "DOWN ";
+
+	ESP_LOGD(TAG, "remote: %02x %s", unk, keys_str.c_str());
 
 	if (keys & KEY_S)
 	{
