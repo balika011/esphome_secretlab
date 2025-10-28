@@ -210,6 +210,8 @@ void SecretLabMagnusPro::process_controller()
 	else if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] == '.' && disp[3] >= '0' && disp[3] <= '9')
 		this->height_ = (disp[0] - '0') * 100 + (disp[1] - '0') * 10 + (disp[3] - '0');
 
+	publish_state((float) this->height_ / 10);
+
 #if 0
 	std::string leds_str;
 	if (this->controller_leds_ & LED_UP)
@@ -227,6 +229,41 @@ void SecretLabMagnusPro::process_controller()
 
 	ESP_LOGD(TAG, "controller: %s [%s]", disp.c_str(), leds_str.c_str());
 #endif
+}
+
+void SecretLabMagnusPro::process_remote()
+{
+	if (this->remote_unk_ == remote_buf_[1] && this->remote_keys_ == remote_buf_[2])
+		return;
+
+	this->remote_unk_ = remote_buf_[1];
+	this->remote_keys_ = remote_buf_[2];
+
+	// HACK
+	if (this->remote_keys_ & KEY_S)
+	{
+		ESP_LOGD(TAG, "remote: set_height_: %d", set_height_);
+		if (this->set_height_ == 0)
+			this->set_height_ = 900;
+		else
+			this->set_height_ = 0;
+	}
+
+	std::string keys_str;
+	if (this->remote_keys_ & KEY_S)
+		keys_str += "S ";
+	if (this->remote_keys_ & KEY_1)
+		keys_str += "1 ";
+	if (this->remote_keys_ & KEY_2)
+		keys_str += "2 ";
+	if (this->remote_keys_ & KEY_3)
+		keys_str += "3 ";
+	if (this->remote_keys_ & KEY_UP)
+		keys_str += "UP ";
+	if (this->remote_keys_ & KEY_DOWN)
+		keys_str += "DOWN ";
+
+	ESP_LOGD(TAG, "remote: %02x [%s]", this->remote_unk_, keys_str.c_str());
 }
 
 void SecretLabMagnusPro::send_controller()
@@ -292,41 +329,6 @@ void SecretLabMagnusPro::send_controller()
 		uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
 		this->controller_->write_array(data, sizeof(data));
 	}
-}
-
-void SecretLabMagnusPro::process_remote()
-{
-	if (this->remote_unk_ == remote_buf_[1] && this->remote_keys_ == remote_buf_[2])
-		return;
-
-	this->remote_unk_ = remote_buf_[1];
-	this->remote_keys_ = remote_buf_[2];
-
-	// HACK
-	if (this->remote_keys_ & KEY_S)
-	{
-		ESP_LOGD(TAG, "remote: set_height_: %d", set_height_);
-		if (this->set_height_ == 0)
-			this->set_height_ = 900;
-		else
-			this->set_height_ = 0;
-	}
-
-	std::string keys_str;
-	if (this->remote_keys_ & KEY_S)
-		keys_str += "S ";
-	if (this->remote_keys_ & KEY_1)
-		keys_str += "1 ";
-	if (this->remote_keys_ & KEY_2)
-		keys_str += "2 ";
-	if (this->remote_keys_ & KEY_3)
-		keys_str += "3 ";
-	if (this->remote_keys_ & KEY_UP)
-		keys_str += "UP ";
-	if (this->remote_keys_ & KEY_DOWN)
-		keys_str += "DOWN ";
-
-	ESP_LOGD(TAG, "remote: %02x [%s]", this->remote_unk_, keys_str.c_str());
 }
 
 void SecretLabMagnusPro::send_remote()
