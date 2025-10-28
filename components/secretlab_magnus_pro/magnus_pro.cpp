@@ -187,8 +187,6 @@ void SecretLabMagnusPro::recv_remote()
 		{
 			uint8_t byte;
 			this->remote_->read_byte(&byte);
-
-			ESP_LOGD(TAG, "remote: ignored: %02x", byte);
 		}
 		return;
 	}
