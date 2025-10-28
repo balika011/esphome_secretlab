@@ -253,8 +253,9 @@ void SecretLabMagnusPro::send_remote()
 
 void SecretLabMagnusPro::switch_intr()
 {
-	is_remote_on_ = this->switch_->digital_read();
-	ESP_LOGD(TAG, "switch_intr: %d", is_remote_on_);
+	bool state = this->switch_->digital_read();
+	ESP_LOGD(TAG, "switch_intr: %d", state);
+	is_remote_on_ = !state;
 }
 
 } // namespace secretlab
