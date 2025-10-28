@@ -231,60 +231,40 @@ void SecretLabMagnusPro::process_controller()
 
 void SecretLabMagnusPro::send_controller()
 {
-
 	if (set_height_ != 0)
 	{
-		ESP_LOGD(TAG, "set_height_: %d height_: %d set_height_ctr_: %d", set_height_, height_, set_height_ctr_);
-		if (height_ > set_height_ + set_height_fast_limit_)
-		{
-			ESP_LOGD(TAG, "DOWN");
-			uint8_t keys = KEY_DOWN;
-			uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-			this->controller_->write_array(data, sizeof(data));
-		}
-		else if (height_ < set_height_ - set_height_fast_limit_)
+		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+		static const uint8_t keys_down[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+
+		ESP_LOGD(TAG, "set_height_: %d height_: %d", set_height_, height_);
+		if (height_ < set_height_ - set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "UP");
-			uint8_t keys = KEY_UP;
-			uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-			this->controller_->write_array(data, sizeof(data));
+			this->controller_->write_array(keys_up, sizeof(keys_up));
+		}
+		else if(height_ > set_height_ + set_height_fast_limit_)
+		{
+			ESP_LOGD(TAG, "DOWN");
+			this->controller_->write_array(keys_down, sizeof(keys_down));
 		}
 		else
 		{
-			set_height_ctr_ = (set_height_ctr_ + 1) % set_height_slow_skip_;
-			if (height_ > set_height_)
+			if (height_ < set_height_)
 			{
-				//if (set_height_ctr_ == (set_height_slow_skip_ - 1))
-				{
-					ESP_LOGD(TAG, "DOWN SLOW");
-					{
-						uint8_t keys = KEY_DOWN;
-						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-						this->controller_->write_array(data, sizeof(data));
-					}
-					{
-						uint8_t keys = 0;
-						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-						this->controller_->write_array(data, sizeof(data));
-					}
-				}
+				ESP_LOGD(TAG, "UP SLOW");
+				this->controller_->write_array(keys_up, sizeof(keys_up));
+				this->controller_->write_array(keys_up, sizeof(keys_up));
+				this->controller_->write_array(keys_up, sizeof(keys_up));
+				this->controller_->write_array(keys_none, sizeof(keys_none));
 			}
-			else if (height_ < set_height_)
+			else if (height_ > set_height_)
 			{
-				//if (set_height_ctr_ == (set_height_slow_skip_ - 1))
-				{
-					ESP_LOGD(TAG, "UP SLOW");
-					{
-						uint8_t keys = KEY_UP;
-						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-						this->controller_->write_array(data, sizeof(data));
-					}
-					{
-						uint8_t keys = 0;
-						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-						this->controller_->write_array(data, sizeof(data));
-					}
-				}
+				ESP_LOGD(TAG, "DOWN SLOW");
+				this->controller_->write_array(keys_down, sizeof(keys_down));
+				this->controller_->write_array(keys_down, sizeof(keys_down));
+				this->controller_->write_array(keys_down, sizeof(keys_down));
+				this->controller_->write_array(keys_none, sizeof(keys_none));
 			}
 			else
 			{
