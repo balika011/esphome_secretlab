@@ -297,17 +297,17 @@ void SecretLabMagnusPro::process_remote()
 	this->remote_keys_ = remote_buf_[2];
 
 	std::string keys_str;
-	if (keys & KEY_S)
+	if (this->remote_keys_ & KEY_S)
 		keys_str += "S ";
-	if (keys & KEY_1)
+	if (this->remote_keys_ & KEY_1)
 		keys_str += "1 ";
-	if (keys & KEY_2)
+	if (this->remote_keys_ & KEY_2)
 		keys_str += "2 ";
-	if (keys & KEY_3)
+	if (this->remote_keys_ & KEY_3)
 		keys_str += "3 ";
-	if (keys & KEY_UP)
+	if (this->remote_keys_ & KEY_UP)
 		keys_str += "UP ";
-	if (keys & KEY_DOWN)
+	if (this->remote_keys_ & KEY_DOWN)
 		keys_str += "DOWN ";
 
 	ESP_LOGD(TAG, "remote: %02x %s", unk, keys_str.c_str());
