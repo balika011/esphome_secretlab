@@ -5,7 +5,7 @@ import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
 CODEOWNERS = ["@balika011"]
-DEPENDENCIES = ["uart"]
+DEPENDENCIES = ["uart", "sensor"]
 
 CONF_CONTROLLER = "controller"
 CONF_REMOTE = "remote"
