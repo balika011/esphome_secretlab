@@ -233,9 +233,9 @@ void SecretLabMagnusPro::send_controller()
 {
 	if (set_height_ != 0)
 	{
-		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_UP, (uint8_t)~KEY_UP, (uint8_t)(KEY_UP + ~KEY_UP)};
 		static const uint8_t keys_down[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
-		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, 0, (uint8_t)~0, (uint8_t)(0 + ~0)};
 
 		ESP_LOGD(TAG, "set_height_: %d height_: %d", set_height_, height_);
 		if (height_ < set_height_ - set_height_fast_limit_)
