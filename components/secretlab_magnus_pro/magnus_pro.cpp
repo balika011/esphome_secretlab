@@ -185,29 +185,35 @@ void SecretLabMagnusPro::send_controller()
 
 	if (do_shit_)
 	{
+		ESP_LOGD(TAG, "height_: %f", height_);
 		keys = 0;
 		if (height_ > 92)
 		{
+			ESP_LOGD(TAG, "DOWN");
 			keys = KEY_DOWN;
 		}
 		else if (height_ > 90)
 		{
 			do_shit_toggle_ = !do_shit_toggle_;
+			ESP_LOGD(TAG, "DOWN toggle: %d", do_shit_toggle_);
 			if (do_shit_toggle_)
 				keys = KEY_DOWN;
 		}
 		else if (height_ < 88)
 		{
+			ESP_LOGD(TAG, "UP");
 			keys = KEY_UP;
 		}
 		else if (height_ < 90)
 		{
+			ESP_LOGD(TAG, "UP toggle: %d", do_shit_toggle_);
 			do_shit_toggle_ = !do_shit_toggle_;
 			if (do_shit_toggle_)
 				keys = KEY_UP;
 		}
 		else
 		{
+			ESP_LOGD(TAG, "DONE");
 			do_shit_ = false;
 		}
 	}
