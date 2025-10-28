@@ -46,8 +46,8 @@ protected:
 
 	InternalGPIOPin *switch_ = 0;
 
-	float height_ = 0.0;
-	float set_height_ = 0.0;
+	int height_ = 0;
+	int set_height_ = 0;
 	int set_height_ctr_ = 0;
 	int set_height_fast_limit_ = 4;
 	int set_height_slow_skip_ = 10;
