@@ -185,12 +185,31 @@ void SecretLabMagnusPro::send_controller()
 
 	if (do_shit_)
 	{
+		keys = 0;
 		if (height_ > 92)
+		{
 			keys = KEY_DOWN;
+		}
+		else if (height_ > 90)
+		{
+			do_shit_toggle_ = !do_shit_toggle_;
+			if (do_shit_toggle_)
+				keys = KEY_DOWN;
+		}
 		else if (height_ < 88)
+		{
 			keys = KEY_UP;
-		// else
+		}
+		else if (height_ < 90)
+		{
+			do_shit_toggle_ = !do_shit_toggle_;
+			if (do_shit_toggle_)
+				keys = KEY_UP;
+		}
+		else
+		{
 			do_shit_ = false;
+		}
 	}
 
 	uint8_t data[] = {0xa5, last_unk_, keys, (uint8_t) ~keys, (uint8_t)(last_unk_ + keys + ~keys)};

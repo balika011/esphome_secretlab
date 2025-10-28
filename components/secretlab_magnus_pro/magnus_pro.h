@@ -43,6 +43,7 @@ protected:
 
 	float height_ = 0;
 	bool do_shit_ = false;
+	bool do_shit_toggle_ = false;
 };
 } // namespace secretlab
 } // namespace esphome
