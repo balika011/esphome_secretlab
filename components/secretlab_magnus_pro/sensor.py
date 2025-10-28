@@ -39,4 +39,5 @@ async def to_code(config):
     switch = await cg.gpio_pin_expression(config[CONF_SWITCH])
     cg.add(var.set_switch(switch))
 
+    await sensor.register_sensor(var, config)
     await cg.register_component(var, config)
