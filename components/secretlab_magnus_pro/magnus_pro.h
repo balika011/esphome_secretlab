@@ -41,9 +41,9 @@ protected:
 	uint8_t last_seg_[3] = {0, 0, 0}, last_leds_ = 0;
 	uint8_t last_unk_ = 0, last_keys_ = 0;
 
-	float height_ = 0;
-	bool do_shit_ = false;
-	int do_shit_ctr_ = 0;
+	float height_ = 0.0;
+	float set_height_ = 0.0;
+	int set_height_ctr_ = 0;
 };
 } // namespace secretlab
 } // namespace esphome

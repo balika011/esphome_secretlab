@@ -173,7 +173,10 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 	}
 
 	if (is_num)
+	{
 		height_ = std::stof(disp);
+		ESP_LOGD(TAG, "height_: %f", height_);
+	}
 
 	ESP_LOGD(TAG, "controller: %s %s", disp.c_str(), leds_str.c_str());
 }
@@ -183,40 +186,39 @@ void SecretLabMagnusPro::send_controller()
 	uint8_t keys = last_keys_;
 	keys &= ~KEY_S;
 
-	if (do_shit_)
+	if (set_height_ != 0.0)
 	{
-		ESP_LOGD(TAG, "height_: %f", height_);
+		ESP_LOGD(TAG, "set_height_: %f height_: %f set_height_ctr_: %d", set_height_, height_, set_height_ctr_);
 		keys = 0;
-		if (height_ > 92)
+		if (height_ > set_height_ - 4)
 		{
 			ESP_LOGD(TAG, "DOWN");
 			keys = KEY_DOWN;
 		}
-		else if (height_ < 88)
+		else if (height_ < set_height_ + 4)
 		{
 			ESP_LOGD(TAG, "UP");
 			keys = KEY_UP;
 		}
 		else
 		{
-			ESP_LOGD(TAG, "toggle: %d", do_shit_ctr_);
-			do_shit_ctr_ = (do_shit_ctr_ + 1) % 5;
-			if (height_ > 90)
+			set_height_ctr_ = (set_height_ctr_ + 1) % 5;
+			if (height_ > set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN");
-				if (!do_shit_ctr_)
+				if (!set_height_ctr_)
 					keys = KEY_DOWN;
 			}
-			else if (height_ < 90)
+			else if (height_ < set_height_)
 			{
 				ESP_LOGD(TAG, "UP");
-				if (!do_shit_ctr_)
+				if (!set_height_ctr_)
 					keys = KEY_UP;
 			}
 			else
 			{
 				ESP_LOGD(TAG, "DONE");
-				do_shit_ = false;
+				set_height_ = 0.0;
 			}
 		}
 	}
@@ -300,7 +302,7 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 
 	if (keys & KEY_S)
 	{
-		this->do_shit_ = true;
+		this->set_height_ = 90.0;
 	}
 }
 
