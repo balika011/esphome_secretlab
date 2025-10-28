@@ -231,22 +231,23 @@ void SecretLabMagnusPro::process_controller()
 
 void SecretLabMagnusPro::send_controller()
 {
-	uint8_t keys = this->remote_keys_;
-	keys &= ~KEY_S;
 
 	if (set_height_ != 0)
 	{
 		ESP_LOGD(TAG, "set_height_: %d height_: %d set_height_ctr_: %d", set_height_, height_, set_height_ctr_);
-		keys = 0;
 		if (height_ > set_height_ + set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN");
-			keys = KEY_DOWN;
+			uint8_t keys = KEY_DOWN;
+			uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+			this->controller_->write_array(data, sizeof(data));
 		}
 		else if (height_ < set_height_ - set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "UP");
-			keys = KEY_UP;
+			uint8_t keys = KEY_UP;
+			uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+			this->controller_->write_array(data, sizeof(data));
 		}
 		else
 		{
@@ -256,7 +257,16 @@ void SecretLabMagnusPro::send_controller()
 				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "DOWN SLOW");
-					keys = KEY_DOWN;
+					{
+						uint8_t keys = KEY_DOWN;
+						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+						this->controller_->write_array(data, sizeof(data));
+					}
+					{
+						uint8_t keys = 0;
+						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+						this->controller_->write_array(data, sizeof(data));
+					}
 				}
 			}
 			else if (height_ < set_height_)
@@ -264,7 +274,16 @@ void SecretLabMagnusPro::send_controller()
 				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "UP SLOW");
-					keys = KEY_UP;
+					{
+						uint8_t keys = KEY_UP;
+						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+						this->controller_->write_array(data, sizeof(data));
+					}
+					{
+						uint8_t keys = 0;
+						uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+						this->controller_->write_array(data, sizeof(data));
+					}
 				}
 			}
 			else
@@ -274,9 +293,13 @@ void SecretLabMagnusPro::send_controller()
 			}
 		}
 	}
-
-	uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-	this->controller_->write_array(data, sizeof(data));
+	else
+	{
+		uint8_t keys = this->remote_keys_;
+		keys &= ~KEY_S;
+		uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+		this->controller_->write_array(data, sizeof(data));
+	}
 }
 
 void SecretLabMagnusPro::process_remote()
