@@ -4,15 +4,16 @@
 
 #include "esphome/core/component.h"
 #include "esphome/core/defines.h"
-#include "esphome/components/uart/uart.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/helpers.h"
+#include "esphome/components/uart/uart.h"
+#include "esphome/components/sensor/sensor.h"
 
 namespace esphome
 {
 namespace secretlab
 {
-class SecretLabMagnusPro : public Component
+class SecretLabMagnusPro : public sensor::Sensor, Component
 {
 public:
 	void setup() override;
