@@ -173,7 +173,7 @@ void SecretLabMagnusPro::send_controller()
 			do_shit_ = false;
 	}
 
-	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, last_unk_ + keys + ~keys};
+	uint8_t data[] = {0xa5, last_unk_, keys, ~keys, (uint8_t)(last_unk_ + keys + ~keys)};
 	this->controller_->write_array(data, sizeof(data));
 }
 
