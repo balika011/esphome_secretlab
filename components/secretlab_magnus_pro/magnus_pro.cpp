@@ -310,7 +310,7 @@ void SecretLabMagnusPro::process_remote()
 	if (this->remote_keys_ & KEY_DOWN)
 		keys_str += "DOWN ";
 
-	ESP_LOGD(TAG, "remote: %02x %s", unk, keys_str.c_str());
+	ESP_LOGD(TAG, "remote: %02x %s", this->remote_unk_, keys_str.c_str());
 
 	if (keys & KEY_S)
 	{
