@@ -202,7 +202,7 @@ void SecretLabMagnusPro::send_controller()
 		}
 		else
 		{
-			set_height_ctr_ = (set_height_ctr_ + 1) % 5;
+			set_height_ctr_ = (set_height_ctr_ + 1) % 10;
 			if (height_ > set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN");
