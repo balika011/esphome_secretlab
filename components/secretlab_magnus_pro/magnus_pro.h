@@ -38,7 +38,7 @@ protected:
 	InternalGPIOPin *switch_ = 0;
 	bool is_remote_on_ = false;
 
-	uint8_t last_seg1_ = 0, last_seg2_ = 0, last_seg3_ = 0, last_leds_ = 0;
+	uint8_t last_seg_[3] = {0, 0, 0}, last_leds_ = 0;
 	uint8_t last_unk_ = 0, last_keys_ = 0;
 
 	float height_ = 0;

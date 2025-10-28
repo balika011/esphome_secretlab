@@ -111,12 +111,12 @@ void SecretLabMagnusPro::recv_controller()
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
 {
-	if (this->last_seg1_ == seg1 && this->last_seg2_ == seg2 && this->last_seg3_ == seg3 && this->last_leds_ == leds)
+	if (this->last_seg_[0] == seg1 && this->last_seg_[1] == seg2 && this->last_seg_[2] == seg3 && this->last_leds_ == leds)
 		return;
 
-	this->last_seg1_ = seg1;
-	this->last_seg2_ = seg2;
-	this->last_seg3_ = seg3;
+	this->last_seg_[0] = seg1;
+	this->last_seg_[1] = seg2;
+	this->last_seg_[2] = seg3;
 	this->last_leds_ = leds;
 
 	std::string disp;
@@ -249,8 +249,17 @@ void SecretLabMagnusPro::send_remote()
 	if (!is_remote_on_)
 		return;
 
-	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (uint8_t)(last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
+#if 0
+	uint8_t data[] = {0x5a, last_seg_[0], last_seg_[1], last_seg_[2], last_leds_, (uint8_t)(last_seg_[0] + last_seg_[1] + last_seg_[2] + last_leds_)};
 	this->remote_->write_array(data, sizeof(data));
+#else
+	static const uint8_t alpha_7seg[] = {0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
+	uint8_t seg0 = alpha_7seg[0];
+	uint8_t seg1 = alpha_7seg[1];
+	uint8_t seg2 = alpha_7seg[2];
+	uint8_t data[] = {0x5a, seg0, seg1, seg2, last_leds_, (uint8_t)(seg0 + seg1 + seg2 + last_leds_)};
+	this->remote_->write_array(data, sizeof(data));
+#endif
 }
 
 void SecretLabMagnusPro::switch_intr()
