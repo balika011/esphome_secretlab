@@ -132,7 +132,7 @@ void SecretLabMagnusPro::recv_controller()
 
 	if (checksum != msg[4])
 	{
-		ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
+		// ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
 		return;
 	}
 
@@ -246,13 +246,15 @@ void SecretLabMagnusPro::send_controller()
 void SecretLabMagnusPro::recv_remote()
 {
 	if (!is_remote_on_)
-	{
-		while (this->remote_->available() > 0)
-		{
-			uint8_t byte;
-			this->remote_->read_byte(&byte);
-		}
 		return;
+
+	// Throw out old packets
+	if (this->controller_->available() > (sizeof(msg) * 2))
+	{
+		int read = this->controller_->available() - (sizeof(msg) + 1);
+		uint8_t *buf = new uint8_t[read];
+		this->controller_->read_array(buf, read);
+		delete[] buf;
 	}
 
 	uint8_t msg[4];
