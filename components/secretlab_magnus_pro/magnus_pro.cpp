@@ -101,42 +101,89 @@ void SecretLabMagnusPro::dump_config()
 
 void SecretLabMagnusPro::recv_controller()
 {
-	uint8_t msg[5];
-
 	// Throw out old packets
-	if (this->controller_->available() > (sizeof(msg) * 2))
+	int available = this->controller_->available();
+	if (available > sizeof(controller_buf_) * 2)
 	{
-		int read = this->controller_->available() - (sizeof(msg) + 1);
-		uint8_t *buf = new uint8_t[read];
-		this->controller_->read_array(buf, read);
+		uint8_t *buf = new uint8_t[available - sizeof(msg)];
+		this->controller_->read_array(buf, available - sizeof(msg));
 		delete [] buf;
 	}
 
-	while (this->controller_->available() >= sizeof(msg) + 1)
+	while(true)
 	{
-		uint8_t byte;
-		this->controller_->read_byte(&byte);
-		if (byte == 0x5a)
-			break;
+		// we ran out of bytes, bail out
+		if (this->controller_->available() == 0)
+			return;
 
-		// ESP_LOGD(TAG, "controller: %02x != 5a", byte);
+		this->remote_->read_byte(&controller_buf_[sizeof(controller_buf_) - 1]);
+
+		this->controller_->read_array(&controller_buf_[controller_buf_len_], to_read);
+		controller_buf_len_ += 1;
+
+		// is the fist byte the start marker?
+		if (controller_buf_[0] == 0x5a)
+		{
+			uint8_t checksum = 0;
+			for (int i = 1; i < sizeof(controller_buf_) - 1; i++)
+				checksum += controller_buf_[i];
+
+			// does the checksum match?
+			if (checksum == controller_buf_[5])
+				break;
+		}
+
+		// shift out the first byte
+		for (int i = 0; i < sizeof(controller_buf_) - 1; i++)
+			controller_buf_[i] = controller_buf_[i + 1];
 	}
 
-	if (this->controller_->available() < sizeof(msg))
+	process_controller(msg[1], msg[2], msg[3], msg[4]);
+}
+
+void SecretLabMagnusPro::recv_remote()
+{
+	if (!is_remote_on_)
 		return;
 
-	this->controller_->read_array(msg, sizeof(msg));
+	uint8_t msg[4];
+
+	// Throw out old packets
+	if (this->remote_->available() > (sizeof(msg) * 2))
+	{
+		int read = this->remote_->available() - (sizeof(msg) + 1);
+		uint8_t *buf = new uint8_t[read];
+		this->remote_->read_array(buf, read);
+		delete[] buf;
+	}
+
+	while (this->remote_->available() >= sizeof(msg) + 1)
+	{
+		uint8_t byte;
+		this->remote_->read_byte(&byte);
+		if (byte == 0xa5)
+			break;
+	}
+
+	if (this->remote_->available() < sizeof(msg))
+		return;
+
+	this->remote_->read_array(msg, sizeof(msg));
+
 	uint8_t checksum = 0;
 	for (int i = 0; i < sizeof(msg) - 1; i++)
 		checksum += msg[i];
 
-	if (checksum != msg[4])
+	if (checksum != msg[3])
+		return;
+
+	if (msg[1] != (uint8_t)~msg[2])
 	{
-		// ESP_LOGD(TAG, "controller: Invalid checksum! %02x != %02x", checksum, msg[4]);
+		ESP_LOGD(TAG, "controller: Keymap not match negated! %02x != %02x", msg[1], (uint8_t)~msg[2]);
 		return;
 	}
 
-	process_controller(msg[0], msg[1], msg[2], msg[3]);
+	process_remote(msg[0], msg[1]);
 }
 
 void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t leds)
@@ -241,57 +288,6 @@ void SecretLabMagnusPro::send_controller()
 
 	uint8_t data[] = {0xa5, last_unk_, keys, (uint8_t) ~keys, (uint8_t)(last_unk_ + keys + ~keys)};
 	this->controller_->write_array(data, sizeof(data));
-}
-
-void SecretLabMagnusPro::recv_remote()
-{
-	if (!is_remote_on_)
-		return;
-
-	uint8_t msg[4];
-
-	// Throw out old packets
-	if (this->remote_->available() > (sizeof(msg) * 2))
-	{
-		int read = this->remote_->available() - (sizeof(msg) + 1);
-		uint8_t *buf = new uint8_t[read];
-		this->remote_->read_array(buf, read);
-		delete[] buf;
-	}
-
-	while (this->remote_->available() >= sizeof(msg) + 1)
-	{
-		uint8_t byte;
-		this->remote_->read_byte(&byte);
-		if (byte == 0xa5)
-			break;
-
-		// ESP_LOGD(TAG, "remote: %02x != a5", byte);
-	}
-
-	if (this->remote_->available() < sizeof(msg))
-		return;
-
-	this->remote_->read_array(msg, sizeof(msg));
-
-	uint8_t checksum = 0;
-	for (int i = 0; i < sizeof(msg) - 1; i++)
-		checksum += msg[i];
-
-	if (checksum != msg[3])
-	{
-		// ESP_LOGD(TAG, "remote: Invalid checksum! %02x != %02x", checksum, msg[3]);
-		// ESP_LOGD(TAG, "remote: msg: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
-		return;
-	}
-
-	if (msg[1] != (uint8_t)~msg[2])
-	{
-		ESP_LOGD(TAG, "controller: Keymap not match negated! %02x != %02x", msg[1], (uint8_t)~msg[2]);
-		return;
-	}
-
-	process_remote(msg[0], msg[1]);
 }
 
 void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
