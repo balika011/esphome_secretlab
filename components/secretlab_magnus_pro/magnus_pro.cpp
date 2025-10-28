@@ -193,7 +193,7 @@ void SecretLabMagnusPro::recv_remote()
 
 	uint8_t msg[4];
 
-	while (this->remote_->available() > sizeof(msg) + 1)
+	while (this->remote_->available() >= sizeof(msg) + 1)
 	{
 		uint8_t byte;
 		this->remote_->read_byte(&byte);
