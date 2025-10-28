@@ -187,6 +187,8 @@ void SecretLabMagnusPro::recv_remote()
 		{
 			uint8_t byte;
 			this->remote_->read_byte(&byte);
+
+			ESP_LOGD(TAG, "remote: ignored: %02x", byte);
 		}
 		return;
 	}
@@ -202,6 +204,8 @@ void SecretLabMagnusPro::recv_remote()
 
 		ESP_LOGD(TAG, "remote: %02x != a5", byte);
 	}
+
+	ESP_LOGD(TAG, "remote: available: %02x", this->remote_->available());
 
 	if (this->remote_->available() < sizeof(msg))
 		return;
