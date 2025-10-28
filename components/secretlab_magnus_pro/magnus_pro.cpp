@@ -209,6 +209,8 @@ void SecretLabMagnusPro::recv_remote()
 		return;
 
 	this->remote_->read_array(msg, sizeof(msg));
+	ESP_LOGD(TAG, "remote: msg: %02x %02x %02x %02x", msg[0], msg[1], msg[2], msg[3]);
+
 	uint8_t checksum = 0;
 	for (int i = 0; i < sizeof(msg) - 1; i++)
 		checksum += msg[i];
