@@ -219,12 +219,6 @@ void SecretLabMagnusPro::process_controller()
 	if (this->controller_leds_ & LED_3)
 		leds_str += "3 ";
 
-	ESP_LOGD(TAG, "dbg 0: %d %d", disp[0] >= '0', disp[0] <= '9');
-	ESP_LOGD(TAG, "dbg 1: %d %d", disp[1] >= '0', disp[1] <= '9');
-	ESP_LOGD(TAG, "dbg 2: %d %d", disp[2] >= '0', disp[2] <= '9');
-	ESP_LOGD(TAG, "dbg 3: %d", disp[2] == '.');
-	ESP_LOGD(TAG, "dbg 4: %d %d", disp[3] >= '0', disp[3] <= '9');
-
 	if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] >= '0' && disp[2] <= '9')
 		this->height_ = (disp[0] - '0') * 1000 + (disp[1] - '0') * 100 + (disp[2] - '0') * 10;
 	else if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] == '.' && disp[3] >= '0' && disp[3] <= '9')
