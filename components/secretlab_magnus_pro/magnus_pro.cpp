@@ -101,18 +101,21 @@ void SecretLabMagnusPro::dump_config()
 
 void SecretLabMagnusPro::recv_controller()
 {
-	if (this->controller_->available() < 6)
-		return;
+	uint8_t msg[5];
 
-	uint8_t byte;
-	this->controller_->read_byte(&byte);
-	if (byte != 0x5a)
+	while (this->controller_->available() >= sizeof(msg) + 1)
 	{
-		ESP_LOGD(TAG, "controller: %02x != 5a", byte);
-		return;
+		uint8_t byte;
+		this->controller_->read_byte(&byte);
+		if (byte == 0x5a)
+			break;
+
+		// ESP_LOGD(TAG, "controller: %02x != 5a", byte);
 	}
 
-	uint8_t msg[5];
+	if (this->controller_->available() < sizeof(msg))
+		return;
+
 	this->controller_->read_array(msg, sizeof(msg));
 	uint8_t checksum = 0;
 	for (int i = 0; i < sizeof(msg) - 1; i++)
