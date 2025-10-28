@@ -1,6 +1,6 @@
 from esphome import pins
 import esphome.codegen as cg
-from esphome.components import uart
+from esphome.components import uart, sensor
 import esphome.config_validation as cv
 from esphome.const import CONF_ADDRESS, CONF_ID
 
@@ -21,7 +21,11 @@ CONFIG_SCHEMA = cv.Schema(
         cv.GenerateID(CONF_REMOTE): cv.use_id(uart.UARTComponent),
         cv.Required(CONF_SWITCH): pins.gpio_input_pin_schema,
     }
-).extend(cv.COMPONENT_SCHEMA)
+).extend(cv.COMPONENT_SCHEMA).extend(sensor.sensor_schema(
+	unit_of_measurement="cm",
+	icon="mdi:human-male-height-variant",
+	accuracy_decimals=1
+))
 
 
 async def to_code(config):
@@ -37,3 +41,4 @@ async def to_code(config):
     cg.add(var.set_switch(switch))
 
     await cg.register_component(var, config)
+    await sensor.register_component(var, config)
