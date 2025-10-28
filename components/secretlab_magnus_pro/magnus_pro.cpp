@@ -325,7 +325,7 @@ void SecretLabMagnusPro::switch_intr()
 	ESP_LOGD(TAG, "switch_intr: %d", state);
 
 	ESP_LOGD(TAG, "switch_intr: available1: %d", this->remote_->available());
-	this->remote_->setup();
+	this->remote_->load_settings();
 	ESP_LOGD(TAG, "switch_intr: available2: %d", this->remote_->available());
 
 	is_remote_on_ = !state;
