@@ -256,12 +256,14 @@ void SecretLabMagnusPro::send_controller()
 				this->controller_->write_array(keys_up, sizeof(keys_up));
 				this->controller_->write_array(keys_up, sizeof(keys_up));
 				this->controller_->write_array(keys_none, sizeof(keys_none));
+				this->controller_->write_array(keys_none, sizeof(keys_none));
 			}
 			else if (height_ > set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN SLOW");
 				this->controller_->write_array(keys_down, sizeof(keys_down));
 				this->controller_->write_array(keys_down, sizeof(keys_down));
+				this->controller_->write_array(keys_none, sizeof(keys_none));
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 			}
 			else
