@@ -106,7 +106,7 @@ void SecretLabMagnusPro::recv_controller()
 	if (this->controller_->available() > (sizeof(msg) * 2))
 	{
 		int read = this->controller_->available() - (sizeof(msg) + 1);
-		void *buf = malloc(read);
+		uint8_t *buf = malloc(read);
 		this->controller_->read_array(buf, read);
 		free(buf);
 	}
