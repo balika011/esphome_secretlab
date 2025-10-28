@@ -168,7 +168,7 @@ void SecretLabMagnusPro::recv_remote()
 				checksum += this->remote_buf_[i];
 
 			// does the checksum match?
-			if (checksum == this->remote_buf_[5])
+			if (checksum == this->remote_buf_[4])
 			{
 				// does the negated keymap match?
 				if (this->remote_buf_[2] == (uint8_t) ~this->remote_buf_[3])
