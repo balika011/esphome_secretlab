@@ -22,10 +22,10 @@ public:
 
 	void set_controller(uart::UARTComponent *controller) { this->controller_ = controller; }
 	void set_remote(uart::UARTComponent *remote) { this->remote_ = remote; }
-	void set_switch(InternalGPIOPin *pin) { switch_ = pin; }
+	void set_switch(InternalGPIOPin *pin) { this->switch_ = pin; }
 	void switch_intr();
 
-	void set_height(float height) { set_height_ = height * 10; }
+	void set_height(float height) { this->set_height_ = height * 10; }
 
 protected:
 	void recv_controller();
@@ -45,7 +45,8 @@ protected:
 	bool is_remote_on_ = false;
 	uart::UARTComponent *remote_ = 0;
 	uint8_t remote_buf_[5] = {0, 0, 0, 0, 0};
-	uint8_t remote_unk_ = 0, remote_keys_ = 0;
+	uint8_t remote_unk_ = 0;
+	uint8_t remote_keys_ = 0;
 
 	InternalGPIOPin *switch_ = 0;
 

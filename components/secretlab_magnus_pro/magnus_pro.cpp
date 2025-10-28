@@ -268,26 +268,26 @@ void SecretLabMagnusPro::process_remote()
 
 void SecretLabMagnusPro::send_controller()
 {
-	if (set_height_ != 0)
+	if (this->set_height_ != 0)
 	{
 		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_UP, (uint8_t)~KEY_UP, (uint8_t)(KEY_UP + ~KEY_UP)};
 		static const uint8_t keys_down[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
 		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, 0, (uint8_t)~0, (uint8_t)(0 + ~0)};
 
 		ESP_LOGD(TAG, "set_height_: %d height_: %d", set_height_, height_);
-		if (height_ < set_height_ - set_height_fast_limit_)
+		if (this->height_ < this->set_height_ - this->set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "UP");
 			this->controller_->write_array(keys_up, sizeof(keys_up));
 		}
-		else if(height_ > set_height_ + set_height_fast_limit_)
+		else if (this->height_ > this->set_height_ + this->set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN");
 			this->controller_->write_array(keys_down, sizeof(keys_down));
 		}
 		else
 		{
-			if (height_ < set_height_)
+			if (this->height_ < this->set_height_)
 			{
 				ESP_LOGD(TAG, "UP SLOW");
 				this->controller_->write_array(keys_up, sizeof(keys_up));
@@ -301,7 +301,7 @@ void SecretLabMagnusPro::send_controller()
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 			}
-			else if (height_ > set_height_)
+			else if (this->height_ > this->set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN SLOW");
 				this->controller_->write_array(keys_down, sizeof(keys_down));
@@ -318,7 +318,7 @@ void SecretLabMagnusPro::send_controller()
 			else
 			{
 				ESP_LOGD(TAG, "DONE");
-				set_height_ = 0;
+				this->set_height_ = 0;
 			}
 		}
 	}
