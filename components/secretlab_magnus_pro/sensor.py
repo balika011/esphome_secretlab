@@ -2,7 +2,7 @@ from esphome import pins
 import esphome.codegen as cg
 from esphome.components import uart, sensor
 import esphome.config_validation as cv
-from esphome.const import CONF_ADDRESS, CONF_ID
+from esphome.const import CONF_ID
 
 CODEOWNERS = ["@balika011"]
 DEPENDENCIES = ["uart"]
@@ -16,7 +16,7 @@ SecretLabMagnusPro = secretlab_ns.class_("SecretLabMagnusPro", cg.Component)
 
 CONFIG_SCHEMA = cv.Schema(
     {
-        #cv.GenerateID(): cv.declare_id(SecretLabMagnusPro),
+        cv.GenerateID(): cv.declare_id(SecretLabMagnusPro),
         cv.GenerateID(CONF_CONTROLLER): cv.use_id(uart.UARTComponent),
         cv.GenerateID(CONF_REMOTE): cv.use_id(uart.UARTComponent),
         cv.Required(CONF_SWITCH): pins.gpio_input_pin_schema,
