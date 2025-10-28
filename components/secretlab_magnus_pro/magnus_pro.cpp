@@ -27,9 +27,18 @@ enum REMOTE_LEDS
 	LED_3 = (1 << 6)
 };
 
-static char _7seg_to_char(uint8_t seg)
+static char _7seg_to_char(uint8_t seg, bool upper)
 {
-	static const uint8_t alpha_7seg[] = {0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
+	/*
+	 0
+	5 1
+	 6
+	4 2
+	 3  7
+	*/
+	//                                           A     B     C     D     E     F    G      H     I     J     K     L     M     N     O     P     Q     R     S     T     U     V     W     X     Y     Z
+	static const uint8_t alpha_7seg_upper[] = {0x77, 0x7f, 0x39, 0x3f, 0x79, 0x71, 0x3d, 0x76, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
+	static const uint8_t alpha_7seg_lower[] = {0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71, 0x3d, 0x74, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x5e, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
 	static const uint8_t num_7seg[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f};
 
 	seg &= 0x7f;
@@ -39,9 +48,18 @@ static char _7seg_to_char(uint8_t seg)
 	if (seg == 0x40)
 		return '-';
 
-	for (int i = 0; i < sizeof(alpha_7seg); i++)
-		if (alpha_7seg[i] == seg)
-			return 'A' + i;
+	if (upper)
+	{
+		for (int i = 0; i < sizeof(alpha_7seg_upper); i++)
+			if (alpha_7seg_upper[i] == seg)
+				return 'A' + i;
+	}
+	else
+	{
+		for (int i = 0; i < sizeof(alpha_7seg_lower); i++)
+			if (alpha_7seg_lower[i] == seg)
+				return 'a' + i;
+	}
 
 	for (int i = 0; i < sizeof(num_7seg); i++)
 		if (num_7seg[i] == seg)
@@ -120,13 +138,13 @@ void SecretLabMagnusPro::process_controller(uint8_t seg1, uint8_t seg2, uint8_t 
 	this->last_leds_ = leds;
 
 	std::string disp;
-	disp += _7seg_to_char(seg1);
+	disp += _7seg_to_char(seg1, true);
 	if (seg1 & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(seg2);
+	disp += _7seg_to_char(seg2, false);
 	if (seg2 & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(seg3);
+	disp += _7seg_to_char(seg3, false);
 	if (seg3 & 0x80)
 		disp += '.';
 
@@ -171,7 +189,7 @@ void SecretLabMagnusPro::send_controller()
 			keys = KEY_DOWN;
 		else if (height_ < 88)
 			keys = KEY_UP;
-		else
+		// else
 			do_shit_ = false;
 	}
 
@@ -249,25 +267,8 @@ void SecretLabMagnusPro::send_remote()
 	if (!is_remote_on_)
 		return;
 
-#if 0
 	uint8_t data[] = {0x5a, last_seg_[0], last_seg_[1], last_seg_[2], last_leds_, (uint8_t)(last_seg_[0] + last_seg_[1] + last_seg_[2] + last_leds_)};
 	this->remote_->write_array(data, sizeof(data));
-#else
-	/*
-	 0
-	5 1
-	 6
-	4 2
-     3  7
-	*/
-	//                                     A     B     C     D     E     F    G      H     I     J     K     L     M     N     O     P     Q     R     S     T     U     V     W     X     Y     Z
-	static const uint8_t alpha_7seg[] = {0x77, 0x7f, 0x39, 0x3f, 0x79, 0x71, 0x3d, 0x76, 0x30, 0x1e, 0x75, 0x38, 0x15, 0x37, 0x3f, 0x73, 0x67, 0x33, 0x6d, 0x78, 0x3e, 0x2e, 0x2a, 0x76, 0x6e, 0x4b};
-	uint8_t seg0 = alpha_7seg[12];
-	uint8_t seg1 = alpha_7seg[13];
-	uint8_t seg2 = alpha_7seg[14];
-	uint8_t data[] = {0x5a, seg0, seg1, seg2, last_leds_, (uint8_t)(seg0 + seg1 + seg2 + last_leds_)};
-	this->remote_->write_array(data, sizeof(data));
-#endif
 }
 
 void SecretLabMagnusPro::switch_intr()
