@@ -254,7 +254,7 @@ void SecretLabMagnusPro::send_controller()
 			set_height_ctr_ = (set_height_ctr_ + 1) % set_height_slow_skip_;
 			if (height_ > set_height_)
 			{
-				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
+				//if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "DOWN SLOW");
 					{
@@ -271,7 +271,7 @@ void SecretLabMagnusPro::send_controller()
 			}
 			else if (height_ < set_height_)
 			{
-				if (set_height_ctr_ == (set_height_slow_skip_ - 1))
+				//if (set_height_ctr_ == (set_height_slow_skip_ - 1))
 				{
 					ESP_LOGD(TAG, "UP SLOW");
 					{
