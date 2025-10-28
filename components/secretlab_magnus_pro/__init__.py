@@ -21,11 +21,13 @@ CONFIG_SCHEMA = cv.Schema(
         cv.GenerateID(CONF_REMOTE): cv.use_id(uart.UARTComponent),
         cv.Required(CONF_SWITCH): pins.gpio_input_pin_schema,
     }
-).extend(cv.COMPONENT_SCHEMA).extend(sensor.sensor_schema(
-	unit_of_measurement="cm",
-	icon="mdi:human-male-height-variant",
-	accuracy_decimals=1
-))
+).extend(cv.COMPONENT_SCHEMA)
+
+#.extend(sensor.sensor_schema(
+#	unit_of_measurement="cm",
+#	icon="mdi:human-male-height-variant",
+#	accuracy_decimals=1
+#))
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
