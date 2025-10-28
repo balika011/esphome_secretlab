@@ -103,8 +103,6 @@ void SecretLabMagnusPro::recv_controller()
 {
 	uint8_t msg[5];
 
-	ESP_LOGD(TAG, "controller: available1: %d", this->controller_->available());
-
 	// Throw out old packets
 	if (this->controller_->available() > (sizeof(msg) * 2))
 	{
@@ -114,8 +112,6 @@ void SecretLabMagnusPro::recv_controller()
 		delete [] buf;
 	}
 
-	ESP_LOGD(TAG, "controller: available2: %d", this->controller_->available());
-
 	while (this->controller_->available() >= sizeof(msg) + 1)
 	{
 		uint8_t byte;
@@ -123,7 +119,7 @@ void SecretLabMagnusPro::recv_controller()
 		if (byte == 0x5a)
 			break;
 
-		ESP_LOGD(TAG, "controller: %02x != 5a", byte);
+		// ESP_LOGD(TAG, "controller: %02x != 5a", byte);
 	}
 
 	if (this->controller_->available() < sizeof(msg))
