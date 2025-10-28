@@ -35,10 +35,8 @@ protected:
 
 	uart::UARTComponent *controller_ = 0;
 	uart::UARTComponent *remote_ = 0;
-
 	InternalGPIOPin *switch_ = 0;
-
-	bool last_state_ = false;
+	bool is_remote_on_ = false;
 
 	uint8_t last_seg1_ = 0, last_seg2_ = 0, last_seg3_ = 0, last_leds_ = 0;
 	uint8_t last_unk_ = 0, last_keys_ = 0;

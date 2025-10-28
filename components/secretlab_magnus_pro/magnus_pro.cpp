@@ -70,7 +70,9 @@ void SecretLabMagnusPro::loop()
 	recv_remote();
 
 	send_controller();
-	send_remote();
+
+	if (is_remote_on_)
+		send_remote();
 }
 
 void SecretLabMagnusPro::dump_config()
@@ -177,18 +179,31 @@ void SecretLabMagnusPro::send_controller()
 
 void SecretLabMagnusPro::recv_remote()
 {
-	if (this->remote_->available() < 5)
-		return;
-
-	uint8_t byte;
-	this->remote_->read_byte(&byte);
-	if (byte != 0xa5)
+	if (!is_remote_on_)
 	{
-		ESP_LOGD(TAG, "remote: %02x != a5", byte);
+		while (this->remote_->available() > 0)
+		{
+			uint8_t byte;
+			this->remote_->read_byte(&byte);
+		}
 		return;
 	}
 
 	uint8_t msg[4];
+
+	while (this->remote_->available() > sizeof(msg) + 1)
+	{
+		uint8_t byte;
+		this->remote_->read_byte(&byte);
+		if (byte == 0xa5)
+			break;
+
+		ESP_LOGD(TAG, "remote: %02x != a5", byte);
+	}
+
+	if (this->remote_->available() < sizeof(msg))
+		return;
+
 	this->remote_->read_array(msg, sizeof(msg));
 	uint8_t checksum = 0;
 	for (int i = 0; i < sizeof(msg) - 1; i++)
@@ -227,14 +242,17 @@ void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
 
 void SecretLabMagnusPro::send_remote()
 {
+	if (!is_remote_on_)
+		return;
+
 	uint8_t data[] = {0x5a, last_seg1_, last_seg2_, last_seg3_, last_leds_, (last_seg1_ + last_seg2_ + last_seg3_ + last_leds_)};
 	this->remote_->write_array(data, sizeof(data));
 }
 
 void SecretLabMagnusPro::switch_intr()
 {
-	bool new_state = this->switch_->digital_read();
-	ESP_LOGD(TAG, "switch_intr: %d", new_state);
+	is_remote_on_ = this->switch_->digital_read();
+	ESP_LOGD(TAG, "switch_intr: %d", is_remote_on_);
 }
 
 } // namespace secretlab
