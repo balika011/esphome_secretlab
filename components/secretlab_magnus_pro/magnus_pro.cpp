@@ -190,12 +190,12 @@ void SecretLabMagnusPro::send_controller()
 	{
 		ESP_LOGD(TAG, "set_height_: %f height_: %f set_height_ctr_: %d", set_height_, height_, set_height_ctr_);
 		keys = 0;
-		if (height_ > set_height_ - 4)
+		if (height_ > set_height_ + 4)
 		{
 			ESP_LOGD(TAG, "DOWN");
 			keys = KEY_DOWN;
 		}
-		else if (height_ < set_height_ + 4)
+		else if (height_ < set_height_ - 4)
 		{
 			ESP_LOGD(TAG, "UP");
 			keys = KEY_UP;
