@@ -32,7 +32,7 @@ protected:
 	void send_remote();
 
 	void process_controller();
-	void process_remote(uint8_t unk, uint8_t keys);
+	void process_remote();
 
 	uart::UARTComponent *controller_ = 0;
 	uint8_t controller_buf_[6] = {0, 0, 0, 0, 0, 0};
