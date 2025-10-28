@@ -25,6 +25,8 @@ public:
 	void set_switch(InternalGPIOPin *pin) { switch_ = pin; }
 	void switch_intr();
 
+	void set_height(float height) { set_height_ = height * 10; }
+
 protected:
 	void recv_controller();
 	void recv_remote();
