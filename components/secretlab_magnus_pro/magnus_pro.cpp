@@ -143,44 +143,45 @@ void SecretLabMagnusPro::recv_remote()
 	if (!is_remote_on_)
 		return;
 
-	uint8_t msg[4];
-
-	// Throw out old packets
-	if (this->remote_->available() > (sizeof(msg) * 2))
+	// throw out old packets
+	int available = this->remote_->available();
+	if (available > sizeof(this->remote_buf_) * 2)
 	{
-		int read = this->remote_->available() - (sizeof(msg) + 1);
-		uint8_t *buf = new uint8_t[read];
-		this->remote_->read_array(buf, read);
+		uint8_t *buf = new uint8_t[available - sizeof(this->remote_buf_)];
+		this->remote_->read_array(buf, available - sizeof(this->remote_buf_));
 		delete[] buf;
 	}
 
-	while (this->remote_->available() >= sizeof(msg) + 1)
+	while (true)
 	{
-		uint8_t byte;
-		this->remote_->read_byte(&byte);
-		if (byte == 0xa5)
-			break;
+		// we ran out of bytes, bail out
+		if (this->remote_->available() == 0)
+			return;
+
+		this->remote_->read_byte(&this->remote_buf_[sizeof(this->remote_buf_) - 1]);
+
+		// is the fist byte the start marker?
+		if (this->remote_buf_[0] == 0xa5)
+		{
+			uint8_t checksum = 0;
+			for (int i = 1; i < sizeof(this->remote_buf_) - 1; i++)
+				checksum += this->remote_buf_[i];
+
+			// does the checksum match?
+			if (checksum == this->remote_buf_[5])
+			{
+				// does the negated keymap match?
+				if (this->remote_buf_[2] == (uint8_t) ~this->remote_buf_[3])
+					break;
+			}
+		}
+
+		// shift out the first byte
+		for (int i = 0; i < sizeof(this->remote_buf_) - 1; i++)
+			this->remote_buf_[i] = this->remote_buf_[i + 1];
 	}
 
-	if (this->remote_->available() < sizeof(msg))
-		return;
-
-	this->remote_->read_array(msg, sizeof(msg));
-
-	uint8_t checksum = 0;
-	for (int i = 0; i < sizeof(msg) - 1; i++)
-		checksum += msg[i];
-
-	if (checksum != msg[3])
-		return;
-
-	if (msg[1] != (uint8_t)~msg[2])
-	{
-		ESP_LOGD(TAG, "controller: Keymap not match negated! %02x != %02x", msg[1], (uint8_t)~msg[2]);
-		return;
-	}
-
-	process_remote(msg[0], msg[1]);
+	process_remote();
 }
 
 void SecretLabMagnusPro::process_controller()
@@ -239,7 +240,7 @@ void SecretLabMagnusPro::process_controller()
 
 void SecretLabMagnusPro::send_controller()
 {
-	uint8_t keys = last_keys_;
+	uint8_t keys = this->remote_keys_;
 	keys &= ~KEY_S;
 
 	if (set_height_ != 0.0)
@@ -283,17 +284,17 @@ void SecretLabMagnusPro::send_controller()
 		}
 	}
 
-	uint8_t data[] = {0xa5, last_unk_, keys, (uint8_t) ~keys, (uint8_t)(last_unk_ + keys + ~keys)};
+	uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
 	this->controller_->write_array(data, sizeof(data));
 }
 
-void SecretLabMagnusPro::process_remote(uint8_t unk, uint8_t keys)
+void SecretLabMagnusPro::process_remote()
 {
-	if (this->last_unk_ == unk && this->last_keys_ == keys)
+	if (this->remote_unk_ == remote_buf_[1] && this->remote_keys_ == remote_buf_[2])
 		return;
 
-	this->last_unk_ = unk;
-	this->last_keys_ = keys;
+	this->remote_unk_ = remote_buf_[1];
+	this->remote_keys_ = remote_buf_[2];
 
 	std::string keys_str;
 	if (keys & KEY_S)

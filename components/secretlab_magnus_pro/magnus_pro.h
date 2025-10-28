@@ -39,9 +39,10 @@ protected:
 	uint8_t controller_seg_[3] = {0, 0, 0};
 	uint8_t controller_leds_ = 0;
 
-	uart::UARTComponent *remote_ = 0;
 	bool is_remote_on_ = false;
-	uint8_t last_unk_ = 0, last_keys_ = 0;
+	uart::UARTComponent *remote_ = 0;
+	uint8_t remote_buf_[5] = {0, 0, 0, 0, 0};
+	uint8_t remote_unk_ = 0, remote_keys_ = 0;
 
 	InternalGPIOPin *switch_ = 0;
 
