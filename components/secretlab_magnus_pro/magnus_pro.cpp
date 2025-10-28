@@ -205,17 +205,17 @@ void SecretLabMagnusPro::process_controller()
 		disp += '.';
 
 	std::string leds_str;
-	if (leds & LED_UP)
+	if (this->controller_leds_ & LED_UP)
 		leds_str += "UP ";
-	if (leds & LED_DOWN)
+	if (this->controller_leds_ & LED_DOWN)
 		leds_str += "DOWN ";
-	if (leds & LED_S)
+	if (this->controller_leds_ & LED_S)
 		leds_str += "S ";
-	if (leds & LED_1)
+	if (this->controller_leds_ & LED_1)
 		leds_str += "1 ";
-	if (leds & LED_2)
+	if (this->controller_leds_ & LED_2)
 		leds_str += "2 ";
-	if (leds & LED_3)
+	if (this->controller_leds_ & LED_3)
 		leds_str += "3 ";
 
 	bool is_num = true;
