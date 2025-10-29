@@ -52,7 +52,7 @@ protected:
 
 	int height_ = 0;
 	int set_height_ = 0;
-	int set_height_fast_limit_ = 20;
+	int set_height_fast_limit_ = 10;
 };
 } // namespace secretlab
 } // namespace esphome
