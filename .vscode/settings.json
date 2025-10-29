@@ -9,6 +9,14 @@
 		"span": "cpp",
 		"cstddef": "cpp",
 		"chrono": "cpp",
-		"cmath": "cpp"
+		"cmath": "cpp",
+		"hash_map": "cpp",
+		"deque": "cpp",
+		"list": "cpp",
+		"unordered_map": "cpp",
+		"vector": "cpp",
+		"initializer_list": "cpp",
+		"format": "cpp",
+		"text_encoding": "cpp"
 	}
 }

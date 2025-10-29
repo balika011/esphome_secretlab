@@ -321,19 +321,18 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 			{
 				ESP_LOGD(TAG, "DOWN SLOW");
 
-				struct timespec spec, spec2;
-				clock_gettime(CLOCK_MONOTONIC, &spec);
+				uint32_t start = micros();
 
 				this->controller_->write_array(keys_down, sizeof(keys_down));
 				delay(8);
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 				delay(100);
 
-				clock_gettime(CLOCK_MONOTONIC, &spec2);
+				uint32_t end = micros();
 				ESP_LOGD(TAG, "diff: %d %d %d",
-						 (((uint32_t)spec2.tv_sec) * 1000U + round(spec2.tv_nsec / 1e6)),
-						 (((uint32_t)spec.tv_sec) * 1000U + round(spec.tv_nsec / 1e6)),
-						 (((uint32_t)spec2.tv_sec) * 1000U + round(spec2.tv_nsec / 1e6)) - (((uint32_t)spec.tv_sec) * 1000U + round(spec.tv_nsec / 1e6)));
+					start,
+					end,
+					end - start);
 			}
 			else
 			{
