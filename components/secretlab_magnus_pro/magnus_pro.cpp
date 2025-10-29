@@ -293,37 +293,21 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 			{
 				ESP_LOGD(TAG, "UP SLOW");
 
-				uint32_t start = micros(), end;
-				do
-				{
+				for (uint32_t start = micros(); micros() - start < 1000;)
 					this->controller_->write_array(keys_up, sizeof(keys_up));
-					end = micros();
-				} while (end - start < 10000);
 
-				start = micros();
-				do
-				{
+				for (uint32_t start = micros(); micros() - start < 1000;)
 					this->controller_->write_array(keys_none, sizeof(keys_none));
-					end = micros();
-				} while (end - start < 100000);
 			}
 			else if (this->height_ > this->set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN SLOW");
 
-				uint32_t start = micros(), end;
-				do
-				{
+				for (uint32_t start = micros(); micros() - start < 1000;)
 					this->controller_->write_array(keys_down, sizeof(keys_up));
-					end = micros();
-				} while (end - start < 10000);
 
-				start = micros();
-				do
-				{
+				for (uint32_t start = micros(); micros() - start < 1000;)
 					this->controller_->write_array(keys_none, sizeof(keys_none));
-					end = micros();
-				} while (end - start < 100000);
 			}
 			else
 			{
