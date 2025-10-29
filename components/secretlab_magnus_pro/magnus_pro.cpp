@@ -264,6 +264,9 @@ void SecretLabMagnusPro::process_remote()
 	this->remote_unk_ = remote_buf_[1];
 	this->remote_keys_ = remote_buf_[2];
 
+	if (this->set_height_ != 0 && (this->remote_keys_ & (KEY_UP | KEY_DOWN)))
+		this->set_height_ = 0;
+
 	std::string keys_str;
 	if (this->remote_keys_ & KEY_S)
 		keys_str += "S ";
