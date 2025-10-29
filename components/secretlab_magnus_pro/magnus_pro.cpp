@@ -214,20 +214,20 @@ void SecretLabMagnusPro::process_controller()
 		{
 			ESP_LOGD(TAG, "UP SLOW");
 
-			for (uint32_t start = micros(); micros() - start < 10000;)
+			for (uint32_t start = micros(); micros() - start < 1000;)
 				this->controller_->write_array(keys_up, sizeof(keys_up));
 
-			for (uint32_t start = micros(); micros() - start < 10000;)
+			for (uint32_t start = micros(); micros() - start < 1000;)
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 		}
 		else if (this->height_ > this->set_height_ && this->height_ < this->set_height_ + this->set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN SLOW");
 
-			for (uint32_t start = micros(); micros() - start < 10000;)
+			for (uint32_t start = micros(); micros() - start < 1000;)
 				this->controller_->write_array(keys_down, sizeof(keys_up));
 
-			for (uint32_t start = micros(); micros() - start < 10000;)
+			for (uint32_t start = micros(); micros() - start < 1000;)
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 		}
 		else if (this->height_ == this->set_height_)
@@ -273,18 +273,6 @@ void SecretLabMagnusPro::process_remote()
 
 	this->remote_unk_ = remote_buf_[1];
 	this->remote_keys_ = remote_buf_[2];
-
-	// HACK
-	if (this->remote_keys_ & KEY_S)
-	{
-		ESP_LOGD(TAG, "remote: set_height_: %d", set_height_);
-		if (this->set_height_ == 0)
-			this->set_height_ = 900;
-		else
-			this->set_height_ = 0;
-	}
-
-	this->remote_keys_ &= ~KEY_S;
 
 	std::string keys_str;
 	if (this->remote_keys_ & KEY_S)
