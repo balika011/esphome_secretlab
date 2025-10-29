@@ -215,12 +215,14 @@ void SecretLabMagnusPro::process_controller()
 			ESP_LOGD(TAG, "UP SLOW");
 			this->controller_->write_array(keys_up, sizeof(keys_up));
 			this->controller_->write_array(keys_up, sizeof(keys_up));
+			this->controller_->write_array(keys_down, sizeof(keys_down));
 		}
 		else if (this->height_ > this->set_height_ && this->height_ < this->set_height_ + this->set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN SLOW");
 			this->controller_->write_array(keys_down, sizeof(keys_down));
 			this->controller_->write_array(keys_down, sizeof(keys_down));
+			this->controller_->write_array(keys_up, sizeof(keys_up));
 		}
 		else if (this->height_ == this->set_height_)
 		{
