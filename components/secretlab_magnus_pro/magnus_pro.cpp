@@ -188,23 +188,15 @@ void SecretLabMagnusPro::recv_remote()
 
 void SecretLabMagnusPro::process_controller()
 {
-	if (this->controller_seg_[0] == this->controller_buf_[1] && this->controller_seg_[1] == this->controller_buf_[2] && this->controller_seg_[2] == this->controller_buf_[3] && this->controller_leds_ == this->controller_buf_[4])
-		return;
-
-	this->controller_seg_[0] = this->controller_buf_[1];
-	this->controller_seg_[1] = this->controller_buf_[2];
-	this->controller_seg_[2] = this->controller_buf_[3];
-	this->controller_leds_ = this->controller_buf_[4];
-
 	std::string disp;
-	disp += _7seg_to_char(this->controller_seg_[0], true);
-	if (this->controller_seg_[0] & 0x80)
+	disp += _7seg_to_char(this->controller_buf_[1], true);
+	if (this->controller_buf_[1] & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(this->controller_seg_[1], false);
-	if (this->controller_seg_[1] & 0x80)
+	disp += _7seg_to_char(this->controller_buf_[2], false);
+	if (this->controller_buf_[2] & 0x80)
 		disp += '.';
-	disp += _7seg_to_char(this->controller_seg_[2], false);
-	if (this->controller_seg_[2] & 0x80)
+	disp += _7seg_to_char(this->controller_buf_[3], false);
+	if (this->controller_buf_[3] & 0x80)
 		disp += '.';
 
 	if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] >= '0' && disp[2] <= '9')
@@ -258,6 +250,14 @@ void SecretLabMagnusPro::process_controller()
 			}
 		}
 	}
+
+	if (this->controller_seg_[0] == this->controller_buf_[1] && this->controller_seg_[1] == this->controller_buf_[2] && this->controller_seg_[2] == this->controller_buf_[3] && this->controller_leds_ == this->controller_buf_[4])
+		return;
+
+	this->controller_seg_[0] = this->controller_buf_[1];
+	this->controller_seg_[1] = this->controller_buf_[2];
+	this->controller_seg_[2] = this->controller_buf_[3];
+	this->controller_leds_ = this->controller_buf_[4];
 
 	publish_state((float) this->height_ / 10);
 
