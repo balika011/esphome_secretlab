@@ -300,6 +300,8 @@ void SecretLabMagnusPro::process_remote()
 			this->set_height_ = 0;
 	}
 
+	this->remote_keys_ &= ~KEY_S;
+
 	std::string keys_str;
 	if (this->remote_keys_ & KEY_S)
 		keys_str += "S ";
@@ -322,9 +324,7 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 	if (this->set_height_ != 0)
 		return;
 
-	uint8_t keys = this->remote_keys_;
-	keys &= ~KEY_S;
-	uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+	uint8_t data[] = {0xa5, this->remote_unk_, this->remote_keys_, (uint8_t)~this->remote_keys_, (uint8_t)(this->remote_unk_ + this->remote_keys_ + ~this->remote_keys_)};
 	this->controller_->write_array(data, sizeof(data));
 }
 
