@@ -318,10 +318,17 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 			else if (this->height_ > this->set_height_)
 			{
 				ESP_LOGD(TAG, "DOWN SLOW");
+
+				struct timespec spec, spec2;
+				clock_gettime(CLOCK_MONOTONIC, &spec);
+
 				this->controller_->write_array(keys_down, sizeof(keys_down));
 				delay(8);
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 				delay(100);
+
+				clock_gettime(CLOCK_MONOTONIC, &spec2);
+				ESP_LOGD(TAG, "diff: %d", (((uint32_t)spec2.tv_sec) * 1000000U + round(spec2.tv_nsec / 1e3)) - (((uint32_t)spec.tv_sec) * 1000000U + round(spec.tv_nsec / 1e3)));
 			}
 			else
 			{
