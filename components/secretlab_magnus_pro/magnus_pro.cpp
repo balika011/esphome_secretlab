@@ -232,6 +232,7 @@ void SecretLabMagnusPro::process_controller()
 
 				for (uint32_t start = micros(); micros() - start < 10000;)
 					this->controller_->write_array(keys_none, sizeof(keys_none));
+				ESP_LOGD(TAG, "UP SLOW-");
 			}
 			else if (this->height_ > this->set_height_)
 			{
@@ -242,6 +243,7 @@ void SecretLabMagnusPro::process_controller()
 
 				for (uint32_t start = micros(); micros() - start < 10000;)
 					this->controller_->write_array(keys_none, sizeof(keys_none));
+				ESP_LOGD(TAG, "DOWN SLOW-");
 			}
 			else
 			{
