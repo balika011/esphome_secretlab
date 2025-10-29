@@ -212,6 +212,53 @@ void SecretLabMagnusPro::process_controller()
 	else if (disp[0] >= '0' && disp[0] <= '9' && disp[1] >= '0' && disp[1] <= '9' && disp[2] == '.' && disp[3] >= '0' && disp[3] <= '9')
 		this->height_ = (disp[0] - '0') * 100 + (disp[1] - '0') * 10 + (disp[3] - '0');
 
+	if (this->set_height_ != 0)
+	{
+		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_UP, (uint8_t)~KEY_UP, (uint8_t)(KEY_UP + ~KEY_UP)};
+		static const uint8_t keys_down[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
+		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, 0, (uint8_t)~0, (uint8_t)(0 + ~0)};
+
+		ESP_LOGD(TAG, "set_height_: %d height_: %d", set_height_, height_);
+		if (this->height_ < this->set_height_ - this->set_height_fast_limit_)
+		{
+			ESP_LOGD(TAG, "UP");
+			this->controller_->write_array(keys_up, sizeof(keys_up));
+		}
+		else if (this->height_ > this->set_height_ + this->set_height_fast_limit_)
+		{
+			ESP_LOGD(TAG, "DOWN");
+			this->controller_->write_array(keys_down, sizeof(keys_down));
+		}
+		else
+		{
+			if (this->height_ < this->set_height_)
+			{
+				ESP_LOGD(TAG, "UP SLOW");
+
+				for (uint32_t start = micros(); micros() - start < 500;)
+					this->controller_->write_array(keys_up, sizeof(keys_up));
+
+				for (uint32_t start = micros(); micros() - start < 500;)
+					this->controller_->write_array(keys_none, sizeof(keys_none));
+			}
+			else if (this->height_ > this->set_height_)
+			{
+				ESP_LOGD(TAG, "DOWN SLOW");
+
+				for (uint32_t start = micros(); micros() - start < 500;)
+					this->controller_->write_array(keys_down, sizeof(keys_up));
+
+				for (uint32_t start = micros(); micros() - start < 500;)
+					this->controller_->write_array(keys_none, sizeof(keys_none));
+			}
+			else
+			{
+				ESP_LOGD(TAG, "DONE");
+				this->set_height_ = 0;
+			}
+		}
+	}
+
 	publish_state((float) this->height_ / 10);
 
 #if 0
@@ -271,58 +318,12 @@ void SecretLabMagnusPro::process_remote()
 void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 {
 	if (this->set_height_ != 0)
-	{
-		static const uint8_t keys_up[] = {0xa5, this->remote_unk_, KEY_UP, (uint8_t)~KEY_UP, (uint8_t)(KEY_UP + ~KEY_UP)};
-		static const uint8_t keys_down[] = {0xa5, this->remote_unk_, KEY_DOWN, (uint8_t)~KEY_DOWN, (uint8_t)(KEY_DOWN + ~KEY_DOWN)};
-		static const uint8_t keys_none[] = {0xa5, this->remote_unk_, 0, (uint8_t)~0, (uint8_t)(0 + ~0)};
+		return;
 
-		ESP_LOGD(TAG, "set_height_: %d height_: %d", set_height_, height_);
-		if (this->height_ < this->set_height_ - this->set_height_fast_limit_)
-		{
-			ESP_LOGD(TAG, "UP");
-			this->controller_->write_array(keys_up, sizeof(keys_up));
-		}
-		else if (this->height_ > this->set_height_ + this->set_height_fast_limit_)
-		{
-			ESP_LOGD(TAG, "DOWN");
-			this->controller_->write_array(keys_down, sizeof(keys_down));
-		}
-		else
-		{
-			if (this->height_ < this->set_height_)
-			{
-				ESP_LOGD(TAG, "UP SLOW");
-
-				for (uint32_t start = micros(); micros() - start < 500;)
-					this->controller_->write_array(keys_up, sizeof(keys_up));
-
-				for (uint32_t start = micros(); micros() - start < 500;)
-					this->controller_->write_array(keys_none, sizeof(keys_none));
-			}
-			else if (this->height_ > this->set_height_)
-			{
-				ESP_LOGD(TAG, "DOWN SLOW");
-
-				for (uint32_t start = micros(); micros() - start < 500;)
-					this->controller_->write_array(keys_down, sizeof(keys_up));
-
-				for (uint32_t start = micros(); micros() - start < 500;)
-					this->controller_->write_array(keys_none, sizeof(keys_none));
-			}
-			else
-			{
-				ESP_LOGD(TAG, "DONE");
-				this->set_height_ = 0;
-			}
-		}
-	}
-	else
-	{
-		uint8_t keys = this->remote_keys_;
-		keys &= ~KEY_S;
-		uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
-		this->controller_->write_array(data, sizeof(data));
-	}
+	uint8_t keys = this->remote_keys_;
+	keys &= ~KEY_S;
+	uint8_t data[] = {0xa5, this->remote_unk_, keys, (uint8_t)~keys, (uint8_t)(this->remote_unk_ + keys + ~keys)};
+	this->controller_->write_array(data, sizeof(data));
 }
 
 void SecretLabMagnusPro::send_remote()
