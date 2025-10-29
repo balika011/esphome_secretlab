@@ -293,21 +293,26 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 			{
 				ESP_LOGD(TAG, "UP SLOW");
 
-				struct timespec spec;
+				struct timespec spec, spec2;
 				clock_gettime(CLOCK_MONOTONIC, &spec);
 
-				this->controller_->write_array(keys_up, sizeof(keys_up));
+				do
+				{
+					this->controller_->write_array(keys_up, sizeof(keys_up));
+					clock_gettime(CLOCK_MONOTONIC, &spec2);
+				} while (
+					((((uint32_t)spec2.tv_sec) * 1000000U + round(spec2.tv_nsec / 1e3)) -
+					(((uint32_t)spec.tv_sec) * 1000000U + round(spec.tv_nsec / 1e3))) < 10
+				);
 
-				struct timespec spec2;
-				clock_gettime(CLOCK_MONOTONIC, &spec2);
-
-				delay(8);
-				this->controller_->write_array(keys_none, sizeof(keys_none));
-				delay(100);
-
-				ESP_LOGD(TAG, "diff: %dms",
-					(((uint32_t)spec2.tv_sec) * 1000000U + round(spec2.tv_nsec / 1e3)) -
-					(((uint32_t)spec.tv_sec) * 1000000U + round(spec.tv_nsec / 1e3))
+				clock_gettime(CLOCK_MONOTONIC, &spec);
+				do
+				{
+					this->controller_->write_array(keys_none, sizeof(keys_none));
+					clock_gettime(CLOCK_MONOTONIC, &spec2);
+				} while (
+					((((uint32_t)spec2.tv_sec) * 1000000U + round(spec2.tv_nsec / 1e3)) -
+					(((uint32_t)spec.tv_sec) * 1000000U + round(spec.tv_nsec / 1e3))) < 100
 				);
 			}
 			else if (this->height_ > this->set_height_)
