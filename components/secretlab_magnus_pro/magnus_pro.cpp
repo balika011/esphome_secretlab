@@ -268,7 +268,7 @@ void SecretLabMagnusPro::process_remote()
 	ESP_LOGD(TAG, "remote: %02x [%s]", this->remote_unk_, keys_str.c_str());
 }
 
-void SecretLabMagnusPro::send_controller()
+void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 {
 	if (this->set_height_ != 0)
 	{
@@ -292,7 +292,20 @@ void SecretLabMagnusPro::send_controller()
 			if (this->height_ < this->set_height_)
 			{
 				ESP_LOGD(TAG, "UP SLOW");
+
+				struct timespec spec;
+				clock_gettime(CLOCK_MONOTONIC, &spec);
+
 				this->controller_->write_array(keys_up, sizeof(keys_up));
+
+				struct timespec spec2;
+				clock_gettime(CLOCK_MONOTONIC, &spec2);
+
+				ESP_LOGD(TAG, "diff: %dms",
+					(((uint32_t)spec2.tv_sec) * 1000000U + round(spec2.tv_nsec / 1e3)) -
+					(((uint32_t)spec.tv_sec) * 1000000U + round(spec.tv_nsec / 1e3))
+				);
+
 				delay(15);
 				this->controller_->write_array(keys_none, sizeof(keys_none));
 				delay(100);
