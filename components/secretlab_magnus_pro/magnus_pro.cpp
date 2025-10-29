@@ -212,23 +212,17 @@ void SecretLabMagnusPro::process_controller()
 
 		if (this->height_ < this->set_height_ && this->height_ > this->set_height_ - this->set_height_fast_limit_)
 		{
-			static uint32_t start = millis();
-			//if (start - millis() > 500)
-			{
-				ESP_LOGD(TAG, "UP SLOW");
-				this->controller_->write_array(keys_up, sizeof(keys_up));
-				start = millis();
-			}
+			ESP_LOGD(TAG, "UP SLOW");
+			this->controller_->write_array(keys_up, sizeof(keys_up));
+			this->controller_->write_array(keys_up, sizeof(keys_up));
+			this->controller_->write_array(keys_up, sizeof(keys_up));
 		}
 		else if (this->height_ > this->set_height_ && this->height_ < this->set_height_ + this->set_height_fast_limit_)
 		{
 			ESP_LOGD(TAG, "DOWN SLOW");
-
-			for (uint32_t start = micros(); micros() - start < 200;)
-				this->controller_->write_array(keys_down, sizeof(keys_up));
-
-			for (uint32_t start = micros(); micros() - start < 1000000;)
-				this->controller_->write_array(keys_none, sizeof(keys_none));
+			this->controller_->write_array(keys_down, sizeof(keys_down));
+			this->controller_->write_array(keys_down, sizeof(keys_down));
+			this->controller_->write_array(keys_down, sizeof(keys_down));
 		}
 		else if (this->height_ == this->set_height_)
 		{
