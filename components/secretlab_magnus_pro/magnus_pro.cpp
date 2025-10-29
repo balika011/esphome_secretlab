@@ -324,15 +324,16 @@ void IRAM_ATTR HOT SecretLabMagnusPro::send_controller()
 				uint32_t start = micros();
 
 				this->controller_->write_array(keys_down, sizeof(keys_down));
-				delay(8);
-				this->controller_->write_array(keys_none, sizeof(keys_none));
-				delay(100);
 
 				uint32_t end = micros();
 				ESP_LOGD(TAG, "diff: %d %d %d",
-					start,
-					end,
-					end - start);
+						 start,
+						 end,
+						 end - start);
+
+				delay(8);
+				this->controller_->write_array(keys_none, sizeof(keys_none));
+				delay(100);
 			}
 			else
 			{
