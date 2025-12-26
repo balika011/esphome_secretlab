@@ -1,0 +1,38 @@
+uart:
+  - 
+    id: controller_uart
+    baud_rate: 9600
+    rx_pin: GPIO26
+    tx_pin: GPIO27
+  -
+    id: remote_uart
+    baud_rate: 9600
+    rx_pin: GPIO32
+    tx_pin: GPIO33
+
+sensor:
+  - platform: secretlab_magnus_pro
+    id: secretlab_magnus_pro_height
+    name: "Secretlab Magnus Pro"
+    controller: controller_uart
+    remote: remote_uart
+    switch: 
+      number: GPIO25
+      inverted: false
+      mode:
+        input: true
+        pullup: true
+
+number:
+  - platform: template
+    id: target_desk_height
+    name: "Target Desk Height"
+    unit_of_measurement: "cm"
+    restore_value: true
+    optimistic: true
+    min_value: "65"
+    max_value: "125"
+    step: 0.1
+    set_action:
+      then:
+        lambda: "return id(secretlab_magnus_pro_height)->set_height(x);"
